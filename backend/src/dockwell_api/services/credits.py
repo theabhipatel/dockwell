@@ -81,12 +81,14 @@ def _email_hash(email: str) -> str:
 async def grant_free_credit(db: AsyncSession, user: User, workspace: Workspace) -> int:
     """Give the account's one-time starter credit to `workspace`. Returns the amount granted.
 
-    Only for verified accounts, once per account and once per email address ever, controlled by
-    the admin's free credit settings.
+    Only for verified accounts (unless the admin turned email verification off), once per
+    account and once per email address ever, controlled by the admin's free credit settings.
     """
-    if user.free_credit_granted_at is not None or user.email_verified_at is None:
+    if user.free_credit_granted_at is not None:
         return 0
     config = await platform.get_config(db)
+    if user.email_verified_at is None and config.require_email_verification:
+        return 0
     if not config.free_credit_enabled or config.free_credit_micros <= 0:
         return 0
     email_hash = _email_hash(user.email)

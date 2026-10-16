@@ -26,6 +26,7 @@ import { SiteFooter } from "../components/site-footer"
 import { SiteHeader } from "../components/site-header"
 import { DEMO_MODE, SIGNUP_URL } from "../config"
 import { Hero } from "./hero"
+import { DropIn, Metering, ModelsStrip, Observability } from "./sections"
 import { useReveal } from "./use-reveal"
 
 const FEATURES = [
@@ -105,7 +106,8 @@ const MODES = [
 
 function SelfHost() {
   return (
-    <section id="self-host" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
+    <section id="self-host" className="bg-surface scroll-mt-20 border-y">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
       <p data-reveal className="text-brand font-mono text-xs font-semibold tracking-[0.18em] uppercase">One codebase</p>
       <h2 data-reveal className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">Three ways to run it. Same code, different configuration.</h2>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -127,6 +129,7 @@ function SelfHost() {
         <span className="flex items-center gap-1.5"><ScrollText className="size-4" /> Prometheus and Grafana included</span>
         <span className="flex items-center gap-1.5"><CreditCard className="size-4" /> Stripe test mode on the demo</span>
       </div>
+      </div>
     </section>
   )
 }
@@ -141,7 +144,7 @@ const FAQ = [
 
 function Faq() {
   return (
-    <section className="bg-surface border-t">
+    <section>
       <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6 sm:py-28">
         <h2 data-reveal className="text-3xl font-semibold tracking-tight sm:text-4xl">Questions</h2>
         <Accordion type="single" collapsible className="mt-8">
@@ -182,8 +185,12 @@ export function LandingPage() {
       <SiteHeader />
       <main>
         <Hero />
+        <ModelsStrip />
         <Features />
         <HowItWorks />
+        <DropIn />
+        <Metering />
+        <Observability />
         <SelfHost />
         <Faq />
         <FinalCta />

@@ -2,8 +2,18 @@
 
 import time
 
+from dockwell_api.db import SessionLocal
 from dockwell_api.security import totp
-from tests.conftest import PASSWORD, Client, latest_email, new_http, signup_and_verify, unique_email
+from dockwell_api.services import platform
+from tests.conftest import (
+    PASSWORD,
+    Client,
+    emails_to,
+    latest_email,
+    new_http,
+    signup_and_verify,
+    unique_email,
+)
 
 
 async def test_signup_requires_verification_then_grants_credit_once(client: Client) -> None:
@@ -31,6 +41,31 @@ async def test_signup_requires_verification_then_grants_credit_once(client: Clie
         billing = (await client.get(f"/api/workspaces/{ws['id']}/billing")).json()
         balances.append(billing["balance_micros"])
     assert sorted(balances) == [0, 3_000_000]
+
+
+async def test_signup_without_verification_signs_in_and_grants_credit(client: Client) -> None:
+    """With email verification turned off (a demo without SMTP), accounts work right away."""
+    async with SessionLocal() as db:
+        await platform.update_config(db, {"require_email_verification": False}, None)
+        await db.commit()
+    try:
+        config = (await client.get("/api/public/config")).json()
+        assert config["email_verification_required"] is False
+        address = unique_email("noverify")
+        res = await client.post(
+            "/api/auth/signup", json={"name": "Grace", "email": address, "password": PASSWORD}
+        )
+        assert res.status_code == 202
+        assert await emails_to(address) == []
+        res = await client.post("/api/auth/signin", json={"email": address, "password": PASSWORD})
+        assert res.status_code == 200
+        res = await client.post("/api/workspaces", json={"name": "Demo"})
+        assert res.status_code == 201
+        assert res.json()["free_credit_micros"] == 3_000_000
+    finally:
+        async with SessionLocal() as db:
+            await platform.update_config(db, {"require_email_verification": True}, None)
+            await db.commit()
 
 
 async def test_signup_does_not_reveal_existing_accounts(client: Client) -> None:

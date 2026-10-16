@@ -26,6 +26,7 @@ async def public_config(db: DB) -> PublicConfig:
         has_logo=await platform.get_logo(db) is not None,
         google_enabled=s.google_configured and config.google_signin_enabled,
         signup_enabled=config.signup_enabled,
+        email_verification_required=config.require_email_verification,
         demo_mode=s.demo_mode,
         stripe_mode=s.stripe_mode,
         api_base_url=s.api_base_url,

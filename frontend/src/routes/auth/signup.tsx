@@ -38,13 +38,23 @@ export function SignupPage() {
 
   const signup = useMutation({
     mutationFn: (values: Values) => unwrap(client.POST("/api/auth/signup", { body: values })),
-    onSuccess: (_, values) => navigate(`/check-email?email=${encodeURIComponent(values.email)}`),
+    onSuccess: (_, values) =>
+      navigate(
+        config?.email_verification_required === false
+          ? `/login?email=${encodeURIComponent(values.email)}&created=1`
+          : `/check-email?email=${encodeURIComponent(values.email)}`,
+      ),
   })
 
   const errors = form.formState.errors
   return (
     <AuthLayout>
-      <AuthHeading title="Create your account" description="Serve open source models behind an OpenAI-compatible API. Your starter credit is added once you verify your email." />
+      <AuthHeading title="Create your account" description={
+          config?.email_verification_required === false
+            ? "Serve open source models behind an OpenAI-compatible API. Your starter credit is added when you create your workspace."
+            : "Serve open source models behind an OpenAI-compatible API. Your starter credit is added once you verify your email."
+        }
+      />
 
       {config?.google_enabled ? (
         <>

@@ -114,7 +114,9 @@ async def signup(body: SignupIn, db: DB, meta: Meta) -> Message:
     existing = await db.scalar(select(User).where(User.email == body.email))
     if existing is not None:
         # Same response either way so sign-up cannot be used to discover accounts.
-        if existing.email_verified_at is None and existing.google_sub is None:
+        if not config.require_email_verification:
+            pass  # Nothing to send: the account can already sign in.
+        elif existing.email_verified_at is None and existing.google_sub is None:
             token = await issue_email_token(
                 db,
                 existing,
@@ -134,6 +136,13 @@ async def signup(body: SignupIn, db: DB, meta: Meta) -> Message:
     )
     db.add(user)
     await db.flush()
+    if not config.require_email_verification:
+        # Verification is off (e.g. a demo without email): the account can sign in right away.
+        audit.record(
+            db, action="auth.sign_up", actor=user, meta=meta, details={"method": "password"}
+        )
+        await db.commit()
+        return Message(message="Your account is ready. Sign in to continue.")
     token = await issue_email_token(
         db,
         user,

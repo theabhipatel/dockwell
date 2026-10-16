@@ -25,6 +25,8 @@ class PublicConfig(APIModel):
     has_logo: bool
     google_enabled: bool
     signup_enabled: bool
+    # False: new accounts can sign in straight away, without the verification email.
+    email_verification_required: bool
     demo_mode: bool
     stripe_mode: Literal["live", "test", "off"]
     api_base_url: str

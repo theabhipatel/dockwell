@@ -4153,6 +4153,8 @@ export interface components {
             google_enabled: boolean;
             /** Signup Enabled */
             signup_enabled: boolean;
+            /** Email Verification Required */
+            email_verification_required: boolean;
             /** Demo Mode */
             demo_mode: boolean;
             /**

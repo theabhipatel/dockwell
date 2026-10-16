@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { AlertCircle, MailWarning } from "lucide-react"
+import { AlertCircle, CheckCircle2, MailWarning } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate, useSearchParams } from "react-router"
 import { toast } from "sonner"
@@ -32,8 +32,9 @@ export function LoginPage() {
   const { data: config } = useConfig()
   const [unverified, setUnverified] = useState<string | null>(null)
   const googleError = params.get("error")
+  const created = params.get("created") === "1"
 
-  const form = useForm<Values>({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } })
+  const form = useForm<Values>({ resolver: zodResolver(schema), defaultValues: { email: params.get("email") ?? "", password: "" } })
 
   const signin = useMutation({
     mutationFn: (values: Values) => unwrap(client.POST("/api/auth/signin", { body: values })),
@@ -61,6 +62,14 @@ export function LoginPage() {
   return (
     <AuthLayout>
       <AuthHeading title="Welcome back" description="Sign in to your DockWell account." />
+
+      {created ? (
+        <Alert className="mb-5">
+          <CheckCircle2 />
+          <AlertTitle>Your account is ready</AlertTitle>
+          <AlertDescription>Sign in with the password you just chose.</AlertDescription>
+        </Alert>
+      ) : null}
 
       {googleError ? (
         <Alert variant="destructive" className="mb-5">

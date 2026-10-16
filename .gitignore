@@ -18,3 +18,5 @@ frontend/openapi.json
 # Local secrets for deploying the Vercel demo (never commit)
 .vercel-secrets.env
 .vercel/
+.vercel
+.env*
