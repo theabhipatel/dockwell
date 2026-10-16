@@ -4,7 +4,6 @@ import {
   ArrowRight,
   BarChart3,
   Boxes,
-  Check,
   Cloud,
   Cpu,
   CreditCard,
@@ -23,80 +22,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button"
 
 import { DemoBanner } from "../components/demo-banner"
-import { GitHubIcon } from "../components/github-icon"
 import { SiteFooter } from "../components/site-footer"
 import { SiteHeader } from "../components/site-header"
-import { DEMO_MODE, GITHUB_URL, SIGNUP_URL } from "../config"
+import { DEMO_MODE, SIGNUP_URL } from "../config"
+import { Hero } from "./hero"
 import { useReveal } from "./use-reveal"
-
-const CODE = `from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://dockwell.example.com/v1",
-    api_key="dw-...",
-)
-
-stream = client.chat.completions.create(
-    model="qwen2.5-7b-instruct",
-    messages=[{"role": "user", "content": "Hello!"}],
-    stream=True,
-)
-for chunk in stream:
-    print(chunk.choices[0].delta.content or "", end="")`
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden border-b">
-      <div className="bg-glow pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="site-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" aria-hidden="true" />
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-16 pb-20 sm:px-6 sm:pt-24 lg:grid-cols-[1.05fr_1fr]">
-        <div>
-          <a data-reveal href={GITHUB_URL} target="_blank" rel="noopener" className="bg-card hover:border-foreground/20 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-xs">
-            <span className="bg-success size-1.5 rounded-full" /> Open source, MIT licensed <ArrowRight className="size-3" />
-          </a>
-          <h1 data-reveal style={{ "--d": 1 } as React.CSSProperties} className="mt-6 text-4xl leading-[1.08] font-semibold tracking-tight sm:text-6xl">
-            Serve open source AI models <span className="text-gradient-brand">like an API platform.</span>
-          </h1>
-          <p data-reveal style={{ "--d": 2 } as React.CSSProperties} className="text-muted-foreground font-reading mt-6 max-w-xl text-lg leading-relaxed">
-            DockWell puts any open source model behind an OpenAI-compatible API, on your own GPU server. Accounts, workspaces, API keys, usage
-            tracking, pay-as-you-go billing, logs and monitoring are built in.
-          </p>
-          <div data-reveal style={{ "--d": 3 } as React.CSSProperties} className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" asChild>
-              <a href={SIGNUP_URL}>{DEMO_MODE ? "Try the live demo" : "Get started"} <ArrowRight /></a>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/docs/self-hosting"><Server /> Self-host it</Link>
-            </Button>
-            <Button size="lg" variant="ghost" asChild>
-              <a href={GITHUB_URL} target="_blank" rel="noopener"><GitHubIcon className="size-4" /> GitHub</a>
-            </Button>
-          </div>
-          <ul data-reveal style={{ "--d": 4 } as React.CSSProperties} className="text-muted-foreground mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            {["vLLM, llama.cpp, Groq or any OpenAI-compatible endpoint", "Works with the official OpenAI SDKs", "Stripe billing included"].map((t) => (
-              <li key={t} className="flex items-center gap-1.5"><Check className="text-success size-4" />{t}</li>
-            ))}
-          </ul>
-        </div>
-        <div data-reveal="scale" className="glow-ring bg-card overflow-hidden rounded-2xl border">
-          <div className="flex items-center gap-1.5 border-b px-4 py-3">
-            <span className="bg-muted-foreground/30 size-2.5 rounded-full" />
-            <span className="bg-muted-foreground/30 size-2.5 rounded-full" />
-            <span className="bg-muted-foreground/30 size-2.5 rounded-full" />
-            <span className="text-muted-foreground ml-3 font-mono text-xs">app.py</span>
-            <span className="bg-brand-soft text-brand ml-auto rounded-md px-2 py-0.5 text-[0.7rem] font-semibold">Only the base URL changes</span>
-          </div>
-          <pre className="bg-code text-code-foreground overflow-x-auto p-5 text-[0.8rem] leading-6"><code>{CODE}</code></pre>
-          <div className="text-muted-foreground flex flex-wrap items-center gap-x-5 gap-y-1 border-t px-4 py-3 font-mono text-xs">
-            <span>36 in / 128 out tokens</span>
-            <span>cost $0.000043</span>
-            <span>first token 180 ms</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 const FEATURES = [
   { icon: Boxes, title: "Deploy any open source model", body: "Add a model by its Hugging Face id. DockWell downloads the weights and starts a vLLM engine on your GPUs, or llama.cpp on CPU." },
@@ -145,7 +75,7 @@ function HowItWorks() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {STEPS.map((s, i) => (
             <div key={s.n} data-reveal style={{ "--d": i } as React.CSSProperties} className="relative">
-              <span className="text-brand font-mono text-5xl font-semibold opacity-30">{s.n}</span>
+              <span className="text-glow-brand inline-block font-mono text-5xl font-semibold">{s.n}</span>
               <h3 className="mt-2 text-lg font-semibold">{s.title}</h3>
               <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{s.body}</p>
             </div>
@@ -156,7 +86,7 @@ function HowItWorks() {
           <div className="flex flex-wrap items-center gap-2 text-sm">
             {["Your app", "API key check", "Model and limits", "Reserve max cost", "vLLM / llama.cpp / Groq", "Exact charge", "Logs and usage"].map((step, i, all) => (
               <span key={step} className="flex items-center gap-2">
-                <span className={i === 4 ? "bg-brand text-brand-foreground rounded-md px-2.5 py-1" : "bg-muted rounded-md px-2.5 py-1"}>{step}</span>
+                <span className={i === 4 ? "bg-brand text-brand-foreground glow-brand rounded-md px-2.5 py-1 font-medium" : "bg-muted rounded-md px-2.5 py-1"}>{step}</span>
                 {i < all.length - 1 ? <ArrowRight className="text-muted-foreground size-3.5" /> : null}
               </span>
             ))}

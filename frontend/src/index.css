@@ -110,8 +110,9 @@
   /* The logo's core: the same bright coral in both modes */
   --brand-bright: oklch(0.719 0.169 13.4);
 
-  --primary: oklch(0.2 0.006 270);
-  --primary-foreground: oklch(0.99 0 0);
+  /* Primary actions use the brand coral, with the shared glow below */
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
   --secondary: oklch(0.96 0.003 270);
   --secondary-foreground: oklch(0.22 0.006 270);
   --muted: oklch(0.962 0.003 270);
@@ -159,6 +160,10 @@
   --elev-5: 0 8px 16px -4px oklch(0.2 0.01 270 / 0.08), 0 32px 64px -20px oklch(0.2 0.01 270 / 0.24);
 
   --grid-line: oklch(0.2 0.01 270 / 0.05);
+
+  /* The coral glow under primary buttons and brand highlights */
+  --glow-brand: 0 6px 20px -6px color-mix(in oklch, var(--brand) 65%, transparent);
+  --glow-brand-strong: 0 10px 28px -6px color-mix(in oklch, var(--brand) 85%, transparent);
 }
 
 .dark {
@@ -179,8 +184,8 @@
   --brand-2: oklch(0.8 0.12 55);
   --brand-bright: oklch(0.719 0.169 13.4);
 
-  --primary: oklch(0.96 0.003 270);
-  --primary-foreground: oklch(0.17 0.005 270);
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
   --secondary: oklch(0.24 0.006 270);
   --secondary-foreground: oklch(0.95 0.003 270);
   --muted: oklch(0.23 0.006 270);
@@ -228,6 +233,9 @@
   --elev-5: 0 8px 18px -4px oklch(0 0 0 / 0.5), 0 36px 72px -24px oklch(0 0 0 / 0.75);
 
   --grid-line: oklch(1 0 0 / 0.045);
+
+  --glow-brand: 0 6px 20px -6px color-mix(in oklch, var(--brand) 70%, transparent);
+  --glow-brand-strong: 0 10px 28px -6px color-mix(in oklch, var(--brand) 90%, transparent);
 }
 
 @layer base {
@@ -281,6 +289,17 @@
   }
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+  /* Brand glow: coral surfaces (buttons, chips) and coral text (numerals, highlights) */
+  .glow-brand {
+    box-shadow: var(--glow-brand);
+  }
+  .text-glow-brand {
+    background: linear-gradient(135deg, var(--brand) 20%, var(--brand-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 16px color-mix(in oklch, var(--brand) 70%, transparent));
   }
 
   /* Rendered markdown (chat replies, docs). */
