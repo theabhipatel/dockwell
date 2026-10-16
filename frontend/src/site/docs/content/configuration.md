@@ -101,6 +101,9 @@ These protect the web app's sign-in and email actions. They're stored in Postgre
 |---|---|---|
 | `ADMIN_EMAILS` | (empty; `admin@dockwell.dev` in `.env.example`) | Comma-separated addresses that become platform admins when they sign in. This is how the first admin is created. Admins can promote others in the admin area. |
 | `SEED_ADMIN_PASSWORD` | | Development only. Creates (or resets) the first `ADMIN_EMAILS` account, verified and an admin, with this password, so a fresh local install can be used right away. `dev.sh` generates it. Ignored when `ENVIRONMENT` isn't `development`. |
+| `SEED_USER_EMAIL` | (empty; `abhi@gmail.com` in `.env.example`) | Development only. Creates (or resets) a regular, verified user account with this address, so you can try the app as a normal user. Ignored when `ENVIRONMENT` isn't `development`. |
+| `SEED_USER_PASSWORD` | (empty; `1234` in `.env.example`) | Development only. The password for `SEED_USER_EMAIL`. It isn't checked against the password rules, so never use it outside local development. |
+| `SEED_USER_NAME` | `DockWell User` | Development only. The display name of the seeded user. |
 
 ## Payments (Stripe)
 

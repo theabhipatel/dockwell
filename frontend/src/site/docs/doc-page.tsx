@@ -52,7 +52,7 @@ function useActiveHeading(headings: Heading[]): string | null {
 export function StarCard({ className }: { className?: string }) {
   return (
     <div className={cn("bg-card relative overflow-hidden rounded-xl border p-4", className)}>
-      <div className="pointer-events-none absolute -top-10 -right-10 size-28 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklch,var(--chart-2)_25%,transparent),transparent)]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -top-10 -right-10 size-28 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklch,var(--brand-2)_25%,transparent),transparent)]" aria-hidden="true" />
       <p className="flex items-center gap-1.5 text-sm font-semibold">
         <Star className="fill-warning text-warning size-4" /> Enjoying DockWell?
       </p>

@@ -51,7 +51,7 @@ def _render(
     if action:
         button = (
             f'<p style="margin:28px 0"><a href="{esc(action[1], quote=True)}" '
-            'style="background:#4f46e5;color:#ffffff;padding:12px 20px;border-radius:10px;'
+            'style="background:#da4256;color:#ffffff;padding:12px 20px;border-radius:10px;'
             f'text-decoration:none;font-weight:600;display:inline-block">{esc(action[0])}</a></p>'
             f'<p style="color:#6b7280;font-size:13px">Or paste this link into your browser:<br>'
             f'<span style="word-break:break-all">{esc(action[1])}</span></p>'
@@ -67,7 +67,7 @@ def _render(
         'font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1c1f1e">'
         '<div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;'
         'padding:32px;border:1px solid #e5e7e6">'
-        '<div style="font-weight:700;font-size:15px;color:#4f46e5;margin-bottom:20px">'
+        '<div style="font-weight:700;font-size:15px;color:#18181b;margin-bottom:20px">'
         f'<img src="{esc(settings.app_url.rstrip("/"))}/logo-email.png" width="28" height="28" '
         'alt="" style="vertical-align:middle;border-radius:7px;margin-right:8px">'
         f"{esc(settings.app_name)}</div>"

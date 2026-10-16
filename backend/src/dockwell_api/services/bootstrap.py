@@ -2,7 +2,8 @@
 
 - local development: the llama.cpp provider and its tiny model (started by ./scripts/dev.sh);
 - the public demo: Groq as the provider, with the models listed in GROQ_MODELS;
-- development only: the first admin account (ADMIN_EMAILS + SEED_ADMIN_PASSWORD).
+- development only: the first admin account (ADMIN_EMAILS + SEED_ADMIN_PASSWORD) and a default
+  user account (SEED_USER_EMAIL + SEED_USER_PASSWORD).
 
 Safe to run on every start and from several processes at once (a database advisory lock).
 """
@@ -99,6 +100,17 @@ async def run() -> None:
             await _ensure_groq(db, settings.groq_api_key.get_secret_value(), settings.groq_models)
         if settings.environment == "development" and settings.seed_admin_password:
             await _ensure_dev_admin(db, settings.seed_admin_password.get_secret_value())
+        if (
+            settings.environment == "development"
+            and settings.seed_user_email
+            and settings.seed_user_password
+        ):
+            await _ensure_dev_user(
+                db,
+                settings.seed_user_email.strip().lower(),
+                settings.seed_user_password.get_secret_value(),
+                settings.seed_user_name,
+            )
         await db.commit()
 
 
@@ -238,3 +250,23 @@ async def _ensure_dev_admin(db: AsyncSession, password: str) -> None:
             user.email_verified_at = utcnow()
         if user.password_hash is None or not verify_password(user.password_hash, password):
             user.password_hash = hash_password(password)
+
+
+async def _ensure_dev_user(db: AsyncSession, address: str, password: str, name: str) -> None:
+    user = await db.scalar(select(User).where(User.email == address))
+    if user is None:
+        db.add(
+            User(
+                email=address,
+                name=name,
+                password_hash=hash_password(password),
+                password_changed_at=utcnow(),
+                email_verified_at=utcnow(),
+            )
+        )
+        log.info("Created the development user account %s", address)
+        return
+    if user.email_verified_at is None:
+        user.email_verified_at = utcnow()
+    if user.password_hash is None or not verify_password(user.password_hash, password):
+        user.password_hash = hash_password(password)

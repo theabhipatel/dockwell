@@ -73,6 +73,7 @@ Docker publishes these ports on `127.0.0.1` only, so they aren't reachable from 
 You have two options:
 
 - **Use the development admin account.** Sign in as `admin@dockwell.dev` with the password `dev.sh` printed at the end of its first run. It's also stored as `SEED_ADMIN_PASSWORD` in `backend/.env`. This account is already verified and is a platform admin.
+- **Or use the default user account.** Sign in as `abhi@gmail.com` with the password `1234` to see the app as a regular user. It's set by `SEED_USER_EMAIL` and `SEED_USER_PASSWORD` in `backend/.env`. Clear them to turn it off.
 - **Sign up as a new user.** Open the verification email in Mailpit at `http://localhost:31825`. Every email lands there, whatever the address.
 
 Then follow the [Quick start](/docs/quick-start) to create a workspace and an API key, and call the API:

@@ -79,6 +79,8 @@ Invoke-Step 'Database migrations' { uv run alembic upgrade head }
 $envText = Get-Content $envFile -Raw
 $adminEmail = if ($envText -match '(?m)^ADMIN_EMAILS=([^,\r\n]*)') { $Matches[1] } else { '' }
 $adminPassword = if ($envText -match '(?m)^SEED_ADMIN_PASSWORD=([^\r\n]*)') { $Matches[1] } else { '' }
+$userEmail = if ($envText -match '(?m)^SEED_USER_EMAIL=([^\r\n]*)') { $Matches[1] } else { '' }
+$userPassword = if ($envText -match '(?m)^SEED_USER_PASSWORD=([^\r\n]*)') { $Matches[1] } else { '' }
 
 # ---- Frontend --------------------------------------------------------------------------
 Set-Location $Frontend
@@ -100,6 +102,7 @@ Write-Host "  API docs:    http://localhost:$ApiPort/api/docs"
 Write-Host "  Mailpit:     http://localhost:$MailUiPort   (every email the app sends lands here)"
 Write-Host "  llama.cpp:   http://localhost:$LlamaPort   (first run downloads the model: docker compose logs -f llamacpp)"
 if ($adminEmail -and $adminPassword) { Write-Host "  Admin login: $adminEmail / $adminPassword" }
+if ($userEmail -and $userPassword) { Write-Host "  User login:  $userEmail / $userPassword" }
 Write-Host '  Press Ctrl+C to stop.'
 Write-Host ''
 

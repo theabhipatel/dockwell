@@ -97,8 +97,8 @@ export function LoginPage() {
       <form onSubmit={form.handleSubmit((v) => { setUnverified(null); signin.mutate(v) })} noValidate>
         <FieldGroup>
           <Field data-invalid={Boolean(form.formState.errors.email)}>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input id="email" type="email" autoComplete="email" autoFocus aria-invalid={Boolean(form.formState.errors.email)} {...form.register("email")} />
+            <FieldLabel htmlFor="email">Your email</FieldLabel>
+            <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" autoFocus aria-invalid={Boolean(form.formState.errors.email)} {...form.register("email")} />
             <FieldError errors={[form.formState.errors.email]} />
           </Field>
           <Field data-invalid={Boolean(form.formState.errors.password)}>

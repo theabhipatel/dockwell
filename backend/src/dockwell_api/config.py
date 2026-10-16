@@ -72,6 +72,11 @@ class Settings(BaseSettings):
     # Development only: creates (or resets) the first admin account with this password, so a
     # fresh local install can be used right away. Ignored in production.
     seed_admin_password: SecretStr | None = None
+    # Development only: creates (or resets) a regular, verified user account with this email
+    # and password. Not checked against the password rules, so keep it out of production.
+    seed_user_email: str = ""
+    seed_user_password: SecretStr | None = None
+    seed_user_name: str = "DockWell User"
 
     # Public demo: the web app shows the demo banner and the API refuses a few destructive
     # platform-wide actions. Payments are always Stripe test mode on the demo.

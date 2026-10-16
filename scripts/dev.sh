@@ -54,6 +54,8 @@ uv run alembic upgrade head
 
 ADMIN_EMAIL="$(grep -E '^ADMIN_EMAILS=' .env | head -1 | cut -d= -f2 | cut -d, -f1)"
 ADMIN_PASSWORD="$(grep -E '^SEED_ADMIN_PASSWORD=' .env | head -1 | cut -d= -f2-)"
+USER_EMAIL="$(grep -E '^SEED_USER_EMAIL=' .env | head -1 | cut -d= -f2-)"
+USER_PASSWORD="$(grep -E '^SEED_USER_PASSWORD=' .env | head -1 | cut -d= -f2-)"
 
 # ---- Frontend --------------------------------------------------------------------------
 cd "$ROOT/frontend"
@@ -79,6 +81,9 @@ echo "  Mailpit:     http://localhost:$MAIL_UI_PORT   (every email the app sends
 echo "  llama.cpp:   http://localhost:$LLAMA_PORT   $llama_state"
 if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
   echo "  Admin login: $ADMIN_EMAIL / $ADMIN_PASSWORD"
+fi
+if [ -n "$USER_EMAIL" ] && [ -n "$USER_PASSWORD" ]; then
+  echo "  User login:  $USER_EMAIL / $USER_PASSWORD"
 fi
 echo "  Press Ctrl+C to stop."
 echo ""

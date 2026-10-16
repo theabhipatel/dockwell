@@ -90,7 +90,7 @@ export function DemoBanner() {
           tile, with a deep black shadow so it lifts clearly off the page in both themes. */}
       <div
         className={
-          "site-toast dark relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#2a2550_0%,#17152e_45%,#0b0b14_100%)] text-white shadow-[0_22px_50px_-10px_rgb(0_0_0/0.75),0_8px_18px_-6px_rgb(0_0_0/0.5)] ring-1 ring-white/10" +
+          "site-toast dark relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#33232a_0%,#19161b_45%,#0b0b10_100%)] text-white shadow-[0_22px_50px_-10px_rgb(0_0_0/0.75),0_8px_18px_-6px_rgb(0_0_0/0.5)] ring-1 ring-white/10" +
           (phase === "leaving" ? " site-toast-out" : "")
         }
       >
@@ -99,7 +99,7 @@ export function DemoBanner() {
             <FlaskConical className="size-5" />
             <span aria-hidden className="absolute -top-1 -right-1 flex size-3">
               <span className="bg-brand absolute inline-flex size-full animate-ping rounded-full opacity-70" />
-              <span className="bg-brand relative inline-flex size-3 rounded-full ring-2 ring-[#17152e]" />
+              <span className="bg-brand relative inline-flex size-3 rounded-full ring-2 ring-[#19161b]" />
             </span>
           </span>
 

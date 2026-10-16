@@ -34,7 +34,7 @@
     background-size: 18px 18px;
   }
   .text-gradient-brand {
-    background: linear-gradient(100deg, var(--brand) 10%, color-mix(in oklch, var(--brand) 55%, var(--chart-2)) 55%, var(--chart-2) 95%);
+    background: linear-gradient(100deg, var(--brand) 10%, color-mix(in oklch, var(--brand) 50%, var(--brand-2)) 55%, var(--brand-2) 95%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

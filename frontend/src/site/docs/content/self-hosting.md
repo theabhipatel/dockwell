@@ -75,7 +75,7 @@ GRAFANA_PASSWORD=replace-with-a-grafana-password
 VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct
 ```
 
-Remove the development lines you don't need, in particular `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` and `SEED_ADMIN_PASSWORD`. Every setting is described in the [Configuration reference](/docs/configuration).
+Remove the development lines you don't need, in particular `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` `SEED_ADMIN_PASSWORD` and the `SEED_USER_*` lines. Every setting is described in the [Configuration reference](/docs/configuration).
 
 > [!WARNING]
 > Back up `.env.prod`, especially `ENCRYPTION_KEY`. It encrypts provider API keys, the Hugging Face token and two-factor secrets in the database. If you lose or change it, those values can't be decrypted.
@@ -294,7 +294,7 @@ Model weights don't need backing up: they're downloaded again if missing.
 - `APP_URL` is the exact public address, with `https://` and no trailing slash.
 - `COOKIE_SECURE=true` and HTTPS in front of `web`.
 - `SECRET_KEY`, `ENCRYPTION_KEY` and `POSTGRES_PASSWORD` are long and random, and backed up.
-- `SEED_ADMIN_PASSWORD` and the local `BOOTSTRAP_LLAMACPP_URL` are removed.
+- `SEED_ADMIN_PASSWORD`, the `SEED_USER_*` lines and the local `BOOTSTRAP_LLAMACPP_URL` are removed.
 - SMTP works (**Send test email** in Admin > Settings).
 - The Stripe webhook is set up and the last event shows in Admin > Settings.
 - Ports `31080`, `31090` and `31030` aren't reachable from the internet.

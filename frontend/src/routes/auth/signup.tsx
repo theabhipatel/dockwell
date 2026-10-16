@@ -65,8 +65,8 @@ export function SignupPage() {
             <FieldError errors={[errors.name]} />
           </Field>
           <Field data-invalid={Boolean(errors.email)}>
-            <FieldLabel htmlFor="email">Work email</FieldLabel>
-            <Input id="email" type="email" autoComplete="email" aria-invalid={Boolean(errors.email)} {...form.register("email")} />
+            <FieldLabel htmlFor="email">Your email</FieldLabel>
+            <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" aria-invalid={Boolean(errors.email)} {...form.register("email")} />
             <FieldError errors={[errors.email]} />
           </Field>
           <Field data-invalid={Boolean(errors.password)}>
