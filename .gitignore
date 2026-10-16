@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+!**/.env.example
+node_modules/
+dist/
+dist-ssr/
+__pycache__/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+.env.prod
+frontend/openapi.json
+.dev/
+
+# Local secrets for deploying the Vercel demo (never commit)
+.vercel-secrets.env
+.vercel/

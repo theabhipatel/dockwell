@@ -1,0 +1,17 @@
+# Files the Vercel CLI must not upload (`vercel deploy` from this folder). Vercel installs and
+# builds everything itself; local secrets, build output and caches stay on this machine.
+.git
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+.vercel-secrets.env
+**/node_modules
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+frontend/dist
+frontend/dist-ssr

@@ -1,0 +1,65 @@
+# Local development services. ./scripts/dev.sh starts these; the API and web app run on the host.
+#   postgres  -> 127.0.0.1:31432
+#   mailpit   -> SMTP 127.0.0.1:31025, web UI http://localhost:31825
+#   llamacpp  -> http://127.0.0.1:31800/v1  (Qwen2.5 0.5B Instruct on the CPU, downloaded on first run)
+name: dockwell
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dockwell
+      POSTGRES_PASSWORD: dockwell
+      POSTGRES_DB: dockwell
+    ports:
+      - "127.0.0.1:31432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dockwell -d dockwell"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:31025:1025"   # SMTP
+      - "127.0.0.1:31825:8025"   # Web UI
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    restart: unless-stopped
+    environment:
+      LLAMA_CACHE: /models
+    command:
+      - --hf-repo
+      - Qwen/Qwen2.5-0.5B-Instruct-GGUF
+      - --hf-file
+      - qwen2.5-0.5b-instruct-q4_k_m.gguf
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - -c
+      - "8192"
+      - --parallel
+      - "2"
+      - --alias
+      - qwen2.5-0.5b-instruct
+      - --jinja
+      - --metrics
+    ports:
+      - "127.0.0.1:31800:8080"
+    volumes:
+      - llama_cache:/models
+
+volumes:
+  pgdata:
+  llama_cache:

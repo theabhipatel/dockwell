@@ -1,0 +1,180 @@
+# DockWell on one server: Postgres, API, web (nginx), inference engine(s) and monitoring.
+#
+#   cp backend/.env.example .env.prod      # then edit: APP_URL, SECRET_KEY, ENCRYPTION_KEY,
+#                                           # POSTGRES_PASSWORD, COOKIE_SECURE=true, SMTP_*, STRIPE_*
+#   GPU server:  docker compose -f docker-compose.prod.yml --env-file .env.prod --profile gpu up -d --build
+#   CPU server:  docker compose -f docker-compose.prod.yml --env-file .env.prod --profile cpu up -d --build
+#
+# Put TLS in front of `web` (port WEB_PORT). See the docs page "Self-hosting on a GPU server".
+name: dockwell-prod
+
+x-api-env: &api-env
+  ENVIRONMENT: production
+  DATABASE_URL: postgresql+asyncpg://dockwell:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/dockwell
+  # Deploy models from the admin area: engine containers join the "dockwell" network.
+  ENGINE_MANAGER: ${ENGINE_MANAGER:-docker}
+  ENGINE_NETWORK: dockwell
+  ENGINE_HF_CACHE_VOLUME: dockwell_hf_cache
+  PROMETHEUS_URL: http://prometheus:9090
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dockwell
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: dockwell
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dockwell -d dockwell"]
+      interval: 5s
+      retries: 20
+    networks: [dockwell]
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env.prod
+    environment:
+      <<: *api-env
+    # Access to the Docker socket lets platform admins start and stop engine containers.
+    # Set DOCKER_GID to the group id of /var/run/docker.sock on the host (stat -c %g ...).
+    group_add:
+      - "${DOCKER_GID:-999}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [dockwell]
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_SITE_URL: ${APP_URL:-}
+        VITE_DEMO_MODE: ${VITE_DEMO_MODE:-false}
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-31080}:8080"
+    depends_on:
+      - api
+    networks: [dockwell]
+
+  # ---- Inference (choose a profile) -------------------------------------------------------
+
+  vllm:
+    profiles: [gpu]
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:latest}
+    restart: unless-stopped
+    command:
+      - --model
+      - ${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+      - --served-model-name
+      - ${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+      - --max-model-len
+      - "${VLLM_MAX_MODEL_LEN:-8192}"
+      - --tensor-parallel-size
+      - "${VLLM_GPU_COUNT:-1}"
+      - --gpu-memory-utilization
+      - "${VLLM_GPU_MEMORY_UTILIZATION:-0.9}"
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - hermes
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+    ipc: host
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${VLLM_GPU_COUNT:-1}
+              capabilities: [gpu]
+    networks: [dockwell]
+
+  dcgm-exporter:
+    profiles: [gpu]
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.9-3.6.1-ubuntu22.04
+    restart: unless-stopped
+    cap_add: [SYS_ADMIN]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks: [dockwell]
+
+  llamacpp:
+    profiles: [cpu]
+    image: ${LLAMACPP_IMAGE:-ghcr.io/ggml-org/llama.cpp:server}
+    restart: unless-stopped
+    environment:
+      LLAMA_CACHE: /models
+    command:
+      - --hf-repo
+      - ${LLAMACPP_HF_REPO:-Qwen/Qwen2.5-1.5B-Instruct-GGUF}
+      - --hf-file
+      - ${LLAMACPP_HF_FILE:-qwen2.5-1.5b-instruct-q4_k_m.gguf}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - -c
+      - "${LLAMACPP_CONTEXT:-8192}"
+      - --alias
+      - ${BOOTSTRAP_LLAMACPP_MODEL:-qwen2.5-1.5b-instruct}
+      - --jinja
+      - --metrics
+    volumes:
+      - hf_cache:/models
+    networks: [dockwell]
+
+  # ---- Monitoring ---------------------------------------------------------------------------
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    user: root
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=${PROMETHEUS_RETENTION:-30d}
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-31090}:9090"
+    networks: [dockwell]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-31030}:3000"
+    networks: [dockwell]
+
+networks:
+  dockwell:
+    name: dockwell
+
+volumes:
+  pgdata:
+  prometheus_data:
+  grafana_data:
+  hf_cache:
+    name: dockwell_hf_cache
