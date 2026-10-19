@@ -78,6 +78,31 @@ GROQ_KNOWN: dict[str, KnownModel] = {
         590_000,
         description="Multilingual model with strong reasoning.",
     ),
+    "qwen/qwen3.8-27b": KnownModel(
+        "Qwen3.8 27B",
+        "Alibaba",
+        131_072,
+        290_000,
+        590_000,
+        description="Multilingual model with strong reasoning and coding.",
+    ),
+    "openai/gpt-oss-safeguard-20b": KnownModel(
+        "GPT-OSS Safeguard 20B",
+        "OpenAI",
+        131_072,
+        100_000,
+        500_000,
+        description="Open-weight reasoning model tuned to follow safety policies.",
+    ),
+    "allam-2-7b": KnownModel(
+        "ALLaM 2 7B",
+        "SDAIA",
+        4_096,
+        50_000,
+        80_000,
+        capabilities=("chat", "completions"),
+        description="Compact bilingual Arabic and English model.",
+    ),
 }
 
 

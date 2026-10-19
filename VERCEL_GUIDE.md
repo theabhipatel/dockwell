@@ -50,14 +50,17 @@ curl -s https://api.groq.com/openai/v1/models -H "Authorization: Bearer $GROQ_AP
   | python3 -c "import json,sys; print('\n'.join(sorted(m['id'] for m in json.load(sys.stdin)['data'])))"
 ```
 
-Choose chat models from that list, comma separated. These two have built-in prices:
+Choose the **chat** models from that list, comma separated. Leave out `whisper-*` (speech to text),
+`canopylabs/orpheus-*` (text to speech) and `meta-llama/llama-prompt-guard-*` (classifiers):
+DockWell serves chat models only. All the chat models free Groq keys get today:
 
 ```bash
-export GROQ_MODELS='openai/gpt-oss-20b,openai/gpt-oss-120b'
+export GROQ_MODELS='openai/gpt-oss-20b,openai/gpt-oss-120b,qwen/qwen3.8-27b,openai/gpt-oss-safeguard-20b,allam-2-7b'
 ```
 
-Models with built-in prices are `llama-3.1-8b-instant`, `llama-3.3-70b-versatile`,
-`openai/gpt-oss-20b`, `openai/gpt-oss-120b` and `qwen/qwen3-32b`. Any other model is added
+These models have built-in names, context lengths and prices: `openai/gpt-oss-20b`,
+`openai/gpt-oss-120b`, `openai/gpt-oss-safeguard-20b`, `qwen/qwen3.8-27b`, `qwen/qwen3-32b`,
+`allam-2-7b`, `llama-3.1-8b-instant` and `llama-3.3-70b-versatile`. Any other model is added
 without a price, so set one later in **Admin > Models**.
 
 ## Step 4. Generate secrets (saved locally)
