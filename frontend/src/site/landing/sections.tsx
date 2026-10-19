@@ -4,6 +4,7 @@ import { Activity, AlertTriangle, ArrowDownToLine, Check, Cpu, Gauge, Lock, Rece
 import { cn } from "@/lib/utils"
 
 import { noise, useActive, useInterval } from "./use-loop"
+import { Button } from "@/components/ui/button"
 
 /* ---------------------------------------------------------------------------------------------
  * Models strip: two rows of open models drifting in opposite directions.
@@ -32,7 +33,7 @@ function ModelChip({ name, meta, engine, tone }: (typeof ROW_A)[number]) {
   return (
     <div className="bg-card flex shrink-0 items-center gap-3 rounded-xl border py-2.5 pr-4 pl-2.5 shadow-xs">
       <span
-        className="flex size-8 items-center justify-center rounded-lg font-mono text-xs font-bold text-white"
+        className="flex size-8 items-center justify-center rounded-lg font-mono text-xs font-bold text-brand-foreground"
         style={{ background: `var(--chart-${tone})` }}
       >
         {name[0]}
@@ -222,21 +223,25 @@ export function DropIn() {
         <div
           ref={ref}
           data-reveal="scale"
-          className="bg-card overflow-hidden rounded-2xl border shadow-[0_30px_80px_-40px_rgb(0_0_0/0.45)]"
+          className="bg-card overflow-hidden rounded-2xl border shadow-xl"
         >
           <div className="flex items-center gap-1 border-b px-3 py-2">
             {SNIPPETS.map((s, i) => (
-              <button
+              <Button
                 key={s.label}
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setState({ tab: i, t: T_TYPED })}
                 className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-                  i === tab ? "bg-brand-soft text-brand" : "text-muted-foreground hover:text-foreground",
+                  "h-auto rounded-md px-3 py-1.5 text-xs font-medium",
+                  i === tab
+                    ? "bg-brand-soft text-brand hover:bg-brand-soft hover:text-brand dark:hover:bg-brand-soft"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {s.label}
-              </button>
+              </Button>
             ))}
             <span className="text-muted-foreground ml-auto font-mono text-[11px]">{SNIPPETS[tab].file}</span>
           </div>
@@ -347,7 +352,7 @@ export function Metering() {
         <div
           ref={ref}
           data-reveal="scale"
-          className="bg-card order-2 overflow-hidden rounded-2xl border shadow-[0_30px_80px_-40px_rgb(0_0_0/0.45)] lg:order-1"
+          className="bg-card order-2 overflow-hidden rounded-2xl border shadow-xl lg:order-1"
         >
           <div className="grid grid-cols-2 border-b sm:grid-cols-3">
             <div className="border-r p-4">
@@ -593,7 +598,7 @@ export function Observability() {
       <div
         ref={ref}
         data-reveal="scale"
-        className="bg-card mt-12 overflow-hidden rounded-2xl border shadow-[0_30px_80px_-40px_rgb(0_0_0/0.45)]"
+        className="bg-card mt-12 overflow-hidden rounded-2xl border shadow-xl"
       >
         <div className="flex items-center gap-2 border-b px-5 py-3">
           <span className="text-sm font-semibold">System health</span>

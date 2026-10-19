@@ -9,6 +9,7 @@ import { AUTHOR, GITHUB_URL, SITE_URL } from "../config"
 import { usePublicConfig } from "../live-data"
 import { DevelopedBy } from "./developed-by"
 import { GitHubIcon } from "./github-icon"
+import { Button } from "@/components/ui/button"
 
 const YEAR = new Date().getFullYear()
 
@@ -181,14 +182,16 @@ function Manifest() {
         <ManifestRow label="Port of call">
           <span className="flex items-center gap-2">
             <code className="truncate font-mono text-[13px]">{baseUrl}</code>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               onClick={() => void copy()}
-              className="text-muted-foreground hover:text-foreground hover:bg-muted inline-flex size-7 shrink-0 items-center justify-center rounded-md transition-colors"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted size-7 rounded-md"
               aria-label="Copy the API base URL"
             >
               {copied ? <Check className="text-brand size-3.5" /> : <Copy className="size-3.5" />}
-            </button>
+            </Button>
           </span>
         </ManifestRow>
         <ManifestRow label="Protocol">OpenAI-compatible, streaming included</ManifestRow>

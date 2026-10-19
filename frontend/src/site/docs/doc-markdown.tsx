@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm"
 import { cn } from "@/lib/utils"
 
 import type { Heading } from "./catalog"
+import { Button } from "@/components/ui/button"
 
 /* ---- GitHub-style callouts: "> [!NOTE]" ------------------------------------------------------- */
 
@@ -65,20 +66,22 @@ function CodeBlock({ children }: { children: ReactNode }) {
     <div className="group bg-surface my-6 overflow-hidden rounded-xl border">
       <div className="flex items-center justify-between border-b px-4 py-1.5">
         <span className="text-muted-foreground font-mono text-[11px] font-medium tracking-wide uppercase">{language ?? "text"}</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="xs"
           onClick={() => {
             void navigator.clipboard?.writeText(code).then(() => {
               setCopied(true)
               window.setTimeout(() => setCopied(false), 1500)
             })
           }}
-          className="text-muted-foreground hover:text-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-sans text-xs transition-colors"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted h-auto gap-1.5 rounded-md px-2 py-1 font-sans text-xs font-normal"
           aria-label="Copy code"
         >
           {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
           {copied ? "Copied" : "Copy"}
-        </button>
+        </Button>
       </div>
       <pre className="overflow-x-auto px-4 py-3.5 font-mono text-[0.84rem] leading-[1.75]">
         <code>{code.split("\n").map((line, i) => <CodeLine key={i} line={line} language={language} />)}</code>

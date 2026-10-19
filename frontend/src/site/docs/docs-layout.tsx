@@ -10,6 +10,7 @@ import { DemoBanner } from "../components/demo-banner"
 import { GitHubStarButton, SiteHeader } from "../components/site-header"
 import { DOC_SECTIONS, findDoc } from "./catalog"
 import { DocsSearch, SearchTrigger, useDocsSearchShortcut } from "./docs-search"
+import { Button } from "@/components/ui/button"
 
 function DocsNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
@@ -56,17 +57,18 @@ export function DocsLayout() {
       <SiteHeader docs />
       {/* Mobile and tablet: section menu + search */}
       <div className="bg-background/95 sticky top-16 z-40 flex items-center gap-2 border-b px-4 py-2 lg:hidden">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => setMenuOpen(true)}
-          className="hover:bg-muted flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium"
+          className="hover:bg-muted h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium"
         >
           <Menu className="size-4 shrink-0" />
           <span className="truncate">{current ? current.title : "Documentation"}</span>
-        </button>
-        <button type="button" onClick={() => setSearchOpen(true)} className="hover:bg-muted rounded-lg p-2" aria-label="Search the docs">
+        </Button>
+        <Button type="button" variant="ghost" size="icon" onClick={() => setSearchOpen(true)} className="hover:bg-muted size-auto rounded-lg p-2" aria-label="Search the docs">
           <Search className="size-4" />
-        </button>
+        </Button>
       </div>
 
       <div className="mx-auto flex w-full max-w-[90rem] flex-1 gap-10 px-4 sm:px-6 lg:px-8">

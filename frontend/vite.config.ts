@@ -101,6 +101,9 @@ function appShellSocialTags(siteUrl: string): Plugin {
 /** Public site pages (landing, docs, privacy). Everything else is the app. */
 const SITE_PAGES = new Set(['/', '/docs', '/pricing', '/models', '/privacy', '/terms'])
 const isSitePath = (pathname: string) => SITE_PAGES.has(pathname) || pathname.startsWith('/docs/')
+/** Paths the web app handles. Keep in sync with vercel.json and nginx.conf. */
+const APP_ROUTE =
+  /^\/(login|signup|check-email|verify-email|forgot-password|reset-password|confirm-email|app|onboarding|w|settings|notifications|invitations|admin)(\/|$)/
 
 /**
  * Serves the public site from site.html and the app from index.html. In production the site is
@@ -119,14 +122,22 @@ function sitePages(): Plugin {
     },
     configurePreviewServer(server) {
       const dist = path.resolve(import.meta.dirname, 'dist')
-      server.middlewares.use((req, _res, next) => {
+      server.middlewares.use((req, res, next) => {
         const [pathname, query = ''] = (req.url ?? '/').split('?')
         if (pathname.startsWith('/api/') || pathname.startsWith('/v1/') || path.extname(pathname)) return next()
         const clean = pathname.replace(/\/+$/, '')
         const page = clean === '' ? 'index.html' : `${clean.slice(1)}/index.html`
-        const target = fs.existsSync(path.join(dist, page)) ? `/${page}` : '/app.html'
-        req.url = query ? `${target}?${query}` : target
-        next()
+        if (fs.existsSync(path.join(dist, page))) {
+          req.url = query ? `/${page}?${query}` : `/${page}`
+          return next()
+        }
+        if (APP_ROUTE.test(clean)) {
+          req.url = query ? `/app.html?${query}` : '/app.html'
+          return next()
+        }
+        res.statusCode = 404
+        res.setHeader('Content-Type', 'text/html; charset=utf-8')
+        res.end(fs.readFileSync(path.join(dist, '404.html')))
       })
     },
   }

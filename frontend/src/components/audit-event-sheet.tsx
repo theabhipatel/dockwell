@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { CopyButton } from "@/components/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import type { Schemas } from "@/lib/api"
@@ -60,6 +61,7 @@ export function AuditEventSheet({ event, onOpenChange }: { event: AuditEvent | n
                         <>
                           {" · "}
                           <Mono>{event.target_id}</Mono>
+                          <CopyButton value={event.target_id} label="Copy target id" size="icon-xs" className="-my-1 align-middle" />
                         </>
                       ) : null}
                     </span>

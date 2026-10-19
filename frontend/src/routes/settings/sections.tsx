@@ -206,14 +206,15 @@ export function AppearanceSection() {
           {THEME_OPTIONS.map((opt) => {
             const active = theme === opt.value
             return (
-              <button
+              <Button
                 key={opt.value}
                 type="button"
+                variant="ghost"
                 role="radio"
                 aria-checked={active}
                 onClick={() => setTheme(opt.value)}
                 className={cn(
-                  "space-y-3 rounded-xl border bg-card p-2.5 text-left transition-all",
+                  "h-auto flex-col items-stretch justify-start gap-3 rounded-xl border bg-card p-2.5 text-left font-normal whitespace-normal transition-all hover:bg-card dark:hover:bg-card",
                   active ? "border-brand ring-3 ring-brand/20" : "hover:border-foreground/20",
                 )}
               >
@@ -226,7 +227,7 @@ export function AppearanceSection() {
                   </div>
                   {active ? <Check className="size-4 text-brand" /> : null}
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>

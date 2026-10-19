@@ -6,13 +6,14 @@ import time
 import uuid
 from datetime import UTC, date, datetime, timedelta
 from email.message import EmailMessage
-from typing import Annotated
+from typing import Annotated, Any
 
 import aiosmtplib
 import httpx
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import ColumnElement, case, func, or_, select, text
+from sqlalchemy import ColumnElement, Select, case, func, or_, select, text
+from sqlalchemy.orm import InstrumentedAttribute
 
 from dockwell_api.config import get_settings
 from dockwell_api.db import utcnow
@@ -141,10 +142,10 @@ async def overview(auth: AdminAuth, db: DB) -> AdminOverview:
         or 0
     )
 
-    def top_query(column: object):  # type: ignore[no-untyped-def]
+    def top_query(column: InstrumentedAttribute[Any]) -> Select[tuple[Any, int, int, int]]:
         return (
             select(
-                column,  # type: ignore[call-overload]
+                column,
                 func.sum(UsageDaily.requests),
                 func.sum(UsageDaily.input_tokens + UsageDaily.output_tokens),
                 func.sum(UsageDaily.cost_micros),
@@ -263,6 +264,7 @@ async def update_platform_settings(
         "default_workspace_monthly_limit_micros",
         "default_key_rpm",
         "default_key_tpm",
+        "default_key_spend_limit_micros",
         "platform_rpm",
     }
     changes: dict[str, object] = {}

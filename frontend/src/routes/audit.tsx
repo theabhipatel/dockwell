@@ -161,9 +161,10 @@ export function AuditPage() {
                     <p className="text-muted-foreground truncate text-xs">{r.actor_email}</p>
                   </TableCell>
                   <TableCell className="text-sm whitespace-nowrap">
-                    <button
+                    <Button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-sm text-left hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                      variant="link"
+                      className="text-foreground h-auto gap-1.5 rounded-sm p-0 text-left font-normal hover:underline"
                       onClick={(e) => {
                         e.stopPropagation()
                         setSelected(r)
@@ -171,7 +172,7 @@ export function AuditPage() {
                     >
                       {actionLabel(r.action)}
                       {r.details?.source === "browser" ? <MonitorSmartphone className="text-muted-foreground size-3.5" aria-label="Reported by the browser" /> : null}
-                    </button>
+                    </Button>
                   </TableCell>
                   <TableCell className="max-w-56 truncate text-sm">{r.target_label ?? "-"}</TableCell>
                   <TableCell className="text-muted-foreground hidden max-w-40 truncate text-xs lg:table-cell">{r.project_name ?? "-"}</TableCell>

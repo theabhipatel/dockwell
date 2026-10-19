@@ -172,6 +172,7 @@ class PlatformSettingsOut(APIModel):
     default_workspace_monthly_limit_micros: int | None
     default_key_rpm: int | None
     default_key_tpm: int | None
+    default_key_spend_limit_micros: int | None
     platform_rpm: int | None
     prompt_logging_allowed: bool
     log_retention_days: int
@@ -202,6 +203,7 @@ class PlatformSettingsIn(APIModel):
     default_workspace_monthly_limit_micros: int | None = Field(default=None, ge=0)
     default_key_rpm: int | None = Field(default=None, ge=1)
     default_key_tpm: int | None = Field(default=None, ge=1)
+    default_key_spend_limit_micros: int | None = Field(default=None, ge=0)
     platform_rpm: int | None = Field(default=None, ge=1)
     prompt_logging_allowed: bool | None = None
     log_retention_days: int | None = Field(default=None, ge=1, le=3650)

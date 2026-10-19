@@ -3778,6 +3778,8 @@ export interface components {
             default_key_rpm?: number | null;
             /** Default Key Tpm */
             default_key_tpm?: number | null;
+            /** Default Key Spend Limit Micros */
+            default_key_spend_limit_micros?: number | null;
             /** Platform Rpm */
             platform_rpm?: number | null;
             /** Prompt Logging Allowed */
@@ -3826,6 +3828,8 @@ export interface components {
             default_key_rpm: number | null;
             /** Default Key Tpm */
             default_key_tpm: number | null;
+            /** Default Key Spend Limit Micros */
+            default_key_spend_limit_micros: number | null;
             /** Platform Rpm */
             platform_rpm: number | null;
             /** Prompt Logging Allowed */

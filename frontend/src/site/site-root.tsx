@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { Outlet, useLocation } from "react-router"
 
+import { TooltipProvider } from "@/components/ui/tooltip"
+
 import { SITE_URL } from "./config"
 import { pageKeywords, pageMeta } from "./seo"
 
@@ -62,7 +64,9 @@ export function SiteRoot() {
 
   return (
     <SignedInContext.Provider value={signedIn}>
-      <Outlet />
+      <TooltipProvider delayDuration={300}>
+        <Outlet />
+      </TooltipProvider>
     </SignedInContext.Provider>
   )
 }

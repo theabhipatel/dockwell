@@ -10,6 +10,7 @@ import { usePublicModels } from "../live-data"
 import { useSignedIn } from "../site-root"
 import { GitHubIcon } from "./github-icon"
 import { ThemeToggle } from "./theme-toggle"
+import { Button } from "@/components/ui/button"
 
 interface NavItem {
   href: string
@@ -61,7 +62,7 @@ function CtaButton({ href, children, className }: { href: string; children: Reac
       {/* Sheen that sweeps across on hover */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-white/25 opacity-0 transition-all duration-500 group-hover/cta:left-full group-hover/cta:opacity-100"
+        className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-sheen opacity-0 transition-all duration-500 group-hover/cta:left-full group-hover/cta:opacity-100"
       />
       <span className="relative">{children}</span>
       <ArrowRight className="relative size-4 transition-transform group-hover/cta:translate-x-0.5" />
@@ -261,7 +262,7 @@ export function SiteHeader({ docs = false }: { docs?: boolean }) {
           "bg-background/70 supports-[backdrop-filter]:bg-background/55 backdrop-blur-xl backdrop-saturate-150",
           docs ? "max-w-[90rem]" : compact ? "max-w-5xl" : "max-w-7xl",
           scrolled || docs || open
-            ? "border-border shadow-[0_10px_30px_-12px_rgb(0_0_0/0.25)] dark:shadow-[0_10px_30px_-12px_rgb(0_0_0/0.7)]"
+            ? "border-border shadow-lg"
             : "border-border/60 shadow-none",
         )}
       >
@@ -293,15 +294,17 @@ export function SiteHeader({ docs = false }: { docs?: boolean }) {
 
         <div className="ml-auto flex items-center gap-1 md:hidden">
           <ThemeToggle />
-          <button
+          <Button
             type="button"
-            className="hover:bg-muted inline-flex size-9 items-center justify-center rounded-lg"
+            variant="ghost"
+            size="icon-lg"
+            className="hover:bg-muted size-9 rounded-lg"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+          </Button>
         </div>
 
         {/* Reading progress along the bottom edge */}

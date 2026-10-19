@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm"
 
 import { copyText } from "@/lib/clipboard"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 const SAFE_PROTOCOL = /^(https?:|mailto:|#|\/)/i
 
@@ -21,14 +22,16 @@ function CodeBlock({ children }: { children?: ReactNode }) {
   return (
     <div className="group/code relative">
       <pre ref={ref}>{children}</pre>
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="icon-sm"
         onClick={() => void copy()}
         aria-label="Copy code"
-        className="bg-background/80 text-muted-foreground hover:text-foreground absolute top-2 right-2 grid size-7 place-items-center rounded-md border opacity-0 transition-opacity group-hover/code:opacity-100 focus-visible:opacity-100"
+        className="bg-background/80 text-muted-foreground hover:text-foreground absolute top-2 right-2 size-7 rounded-md opacity-0 transition-opacity group-hover/code:opacity-100 focus-visible:opacity-100"
       >
         {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-      </button>
+      </Button>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { Download, MoreHorizontal, Plug, Plus, RefreshCw, Server, Trash2 } from 
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { CopyButton } from "@/components/copy-button"
 import { useBreadcrumbs } from "@/components/layout/breadcrumbs"
 import { Page, PageHeader } from "@/components/page"
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/states"
@@ -134,7 +135,8 @@ function ImportDialog({ provider, onClose }: { provider: Provider; onClose: () =
               <li key={m.id}>
                 <label className="hover:bg-muted flex items-center gap-3 rounded-md px-2 py-1.5 text-sm">
                   <Checkbox disabled={m.already_added} checked={m.already_added || selected.includes(m.id)} onCheckedChange={(v) => setSelected(v ? [...selected, m.id] : selected.filter((x) => x !== m.id))} />
-                  <code className="flex-1 truncate text-xs">{m.id}</code>
+                  <code className="min-w-0 flex-1 truncate text-xs">{m.id}</code>
+                  <CopyButton value={m.id} label="Copy model id" size="icon-xs" />
                   {m.context_length ? <span className="text-muted-foreground text-xs">{m.context_length.toLocaleString()} ctx</span> : null}
                   {m.already_added ? <Badge variant="secondary">Added</Badge> : null}
                 </label>

@@ -52,6 +52,7 @@ function SettingsForm({ s }: { s: Settings }) {
     ws_limit: microsToDollars(s.default_workspace_monthly_limit_micros),
     key_rpm: str(s.default_key_rpm),
     key_tpm: str(s.default_key_tpm),
+    key_limit: microsToDollars(s.default_key_spend_limit_micros),
     platform_rpm: str(s.platform_rpm),
     retention: String(s.log_retention_days),
     domains: s.blocked_email_domains.join("\n"),
@@ -140,13 +141,14 @@ function SettingsForm({ s }: { s: Settings }) {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Default limits</CardTitle><CardDescription>Empty means unlimited. Admins can override per workspace; members set key and project limits themselves.</CardDescription></CardHeader>
+        <CardHeader><CardTitle>Default limits</CardTitle><CardDescription>Empty means unlimited. Admins can override per workspace. The new key spend limit applies when a key is created without one; members can still change it.</CardDescription></CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-3">
           <Field><FieldLabel>Workspace requests / min</FieldLabel><Input type="number" value={f.ws_rpm} onChange={set("ws_rpm")} /></Field>
           <Field><FieldLabel>Workspace tokens / min</FieldLabel><Input type="number" value={f.ws_tpm} onChange={set("ws_tpm")} /></Field>
           <Field><FieldLabel>New workspace monthly limit</FieldLabel><InputGroup><InputGroupAddon>$</InputGroupAddon><InputGroupInput type="number" value={f.ws_limit} onChange={set("ws_limit")} /></InputGroup></Field>
           <Field><FieldLabel>Key requests / min</FieldLabel><Input type="number" value={f.key_rpm} onChange={set("key_rpm")} /></Field>
           <Field><FieldLabel>Key tokens / min</FieldLabel><Input type="number" value={f.key_tpm} onChange={set("key_tpm")} /></Field>
+          <Field><FieldLabel>New key spend limit</FieldLabel><InputGroup><InputGroupAddon>$</InputGroupAddon><InputGroupInput type="number" value={f.key_limit} onChange={set("key_limit")} /></InputGroup></Field>
           <Field><FieldLabel>Platform requests / min</FieldLabel><Input type="number" value={f.platform_rpm} onChange={set("platform_rpm")} /></Field>
         </CardContent>
         <CardFooter>
@@ -159,6 +161,7 @@ function SettingsForm({ s }: { s: Settings }) {
                 default_workspace_monthly_limit_micros: f.ws_limit ? dollarsToMicros(Number(f.ws_limit)) : null,
                 default_key_rpm: num(f.key_rpm),
                 default_key_tpm: num(f.key_tpm),
+                default_key_spend_limit_micros: f.key_limit ? dollarsToMicros(Number(f.key_limit)) : null,
                 platform_rpm: num(f.platform_rpm),
               })
             }

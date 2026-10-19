@@ -301,7 +301,7 @@ function DeployStage({ clock }: { clock: Clock }) {
               <span
                 className={cn(
                   "flex size-3.5 items-center justify-center rounded-full transition-colors",
-                  i < checks ? "bg-chart-5 text-white" : "border",
+                  i < checks ? "bg-success text-primary-foreground" : "border",
                 )}
               >
                 {i < checks ? <Check className="size-2.5" strokeWidth={3} /> : null}
@@ -444,7 +444,7 @@ export function Hero() {
           style={{ "--d": 4 } as React.CSSProperties}
           role="img"
           aria-label="How DockWell works: pick a model from Hugging Face, it is deployed on your GPU server with vLLM, served at your own OpenAI-compatible /v1 endpoint, and every request from your app is checked and metered token by token."
-          className="bg-background/60 mx-auto mt-16 max-w-6xl rounded-3xl border p-4 shadow-[0_30px_80px_-40px_rgb(0_0_0/0.35)] backdrop-blur-sm sm:p-6"
+          className="bg-background/60 mx-auto mt-16 max-w-6xl rounded-3xl border p-4 shadow-xl backdrop-blur-sm sm:p-6"
         >
           <StepRail clock={clock} />
           <div className="mt-6">

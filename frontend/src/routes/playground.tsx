@@ -347,10 +347,10 @@ export function PlaygroundPage() {
                   c.id === conversationId && "bg-muted",
                 )}
               >
-                <button type="button" className="min-w-0 flex-1 px-2 py-2 text-left" onClick={() => void openConversation(c.id)}>
+                <Button type="button" variant="ghost" className="h-auto min-w-0 flex-1 flex-col items-stretch justify-start gap-0 px-2 py-2 text-left font-normal hover:bg-transparent dark:hover:bg-transparent" onClick={() => void openConversation(c.id)}>
                   <p className="truncate text-sm">{c.title}</p>
                   <p className="text-muted-foreground truncate text-xs">{relativeTime(c.updated_at)}</p>
-                </button>
+                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs" className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100" aria-label="Chat options">

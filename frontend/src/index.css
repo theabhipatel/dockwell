@@ -45,6 +45,8 @@
   --color-brand-soft: var(--brand-soft);
   --color-brand-2: var(--brand-2);
   --color-brand-bright: var(--brand-bright);
+  --color-sheen: var(--sheen);
+  --color-qr-surface: var(--qr-surface);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
@@ -160,6 +162,10 @@
   --elev-5: 0 8px 16px -4px oklch(0.2 0.01 270 / 0.08), 0 32px 64px -20px oklch(0.2 0.01 270 / 0.24);
 
   --grid-line: oklch(0.2 0.01 270 / 0.05);
+
+  /* A light shine swept across brand buttons, and the QR code backdrop: light in both modes */
+  --sheen: oklch(1 0 0 / 0.25);
+  --qr-surface: oklch(1 0 0);
 
   /* The coral glow under primary buttons and brand highlights */
   --glow-brand: 0 6px 20px -6px color-mix(in oklch, var(--brand) 65%, transparent);

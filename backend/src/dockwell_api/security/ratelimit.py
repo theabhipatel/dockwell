@@ -2,11 +2,12 @@
 serverless mode. Used for sign-in throttling and for the gateway's request / token limits."""
 
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from sqlalchemy import case, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.dml import ReturningInsert
 
 from dockwell_api.db import SessionLocal, utcnow
 from dockwell_api.models import RateCounter
@@ -19,7 +20,9 @@ class RateLimited(Exception):
         self.scope = scope
 
 
-def _upsert(key: str, window: timedelta, count: int, tokens: int):  # type: ignore[no-untyped-def]
+def _upsert(
+    key: str, window: timedelta, count: int, tokens: int
+) -> ReturningInsert[int, int, datetime]:
     now = utcnow()
     expired = RateCounter.window_start < now - window
     stmt = insert(RateCounter).values(key=key, window_start=now, count=count, tokens=tokens)

@@ -10,6 +10,7 @@ import { GitHubIcon } from "../components/github-icon"
 import { extractHeadings, findDoc, loadDocSource, neighbours } from "./catalog"
 import type { Heading } from "./catalog"
 import { DocMarkdown } from "./doc-markdown"
+import { Button } from "@/components/ui/button"
 
 export async function docLoader({ params }: LoaderFunctionArgs) {
   const meta = findDoc(params.slug)
@@ -168,13 +169,15 @@ export function DocPage() {
         <div className="sticky top-24 max-h-[calc(100dvh-7rem)] space-y-6 overflow-y-auto pb-6">
           <Toc headings={headings} active={active} />
           <StarCard />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-xs font-medium"
+            className="text-muted-foreground hover:text-foreground h-auto gap-1.5 px-0 text-xs font-medium hover:bg-transparent dark:hover:bg-transparent"
           >
             <ArrowUp className="size-3.5" /> Back to top
-          </button>
+          </Button>
         </div>
       </aside>
     </div>

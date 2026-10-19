@@ -45,6 +45,8 @@ class PlatformConfig(BaseModel):
     default_workspace_monthly_limit_micros: int | None = Field(default=None, ge=0)
     default_key_rpm: int | None = Field(default=None, ge=1)
     default_key_tpm: int | None = Field(default=None, ge=1)
+    # Lifetime spend limit given to new API keys whose creator doesn't set one.
+    default_key_spend_limit_micros: int | None = Field(default=None, ge=0)
     platform_rpm: int | None = Field(default=None, ge=1)
     # Prompt / response logging (off by default) and log retention
     prompt_logging_allowed: bool = False

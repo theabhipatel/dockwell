@@ -34,7 +34,7 @@ from dockwell_api.schemas.project import (
     ProjectUpdate,
 )
 from dockwell_api.security import api_keys
-from dockwell_api.services import audit, notifications
+from dockwell_api.services import audit, notifications, platform
 from dockwell_api.services.access import accessible_project_ids, get_project
 from dockwell_api.services.users import user_refs
 
@@ -437,6 +437,10 @@ async def create_api_key(body: ApiKeyCreate, ctx: WsCtx, db: DB, meta: Meta) -> 
             raise HTTPException(
                 status.HTTP_422_UNPROCESSABLE_CONTENT, "The expiry date must be in the future."
             )
+    spend_limit = body.spend_limit_micros
+    if spend_limit is None:
+        # No limit chosen: new keys get the admin's default spend limit, if one is set.
+        spend_limit = (await platform.get_config(db)).default_key_spend_limit_micros
     secret, key_hash, prefix, last_four = api_keys.generate()
     key = ApiKey(
         workspace_id=ctx.workspace.id,
@@ -448,7 +452,7 @@ async def create_api_key(body: ApiKeyCreate, ctx: WsCtx, db: DB, meta: Meta) -> 
         created_by_id=ctx.user.id,
         expires_at=expires_at,
         allowed_models=await _check_models(db, body.allowed_models),
-        spend_limit_micros=body.spend_limit_micros,
+        spend_limit_micros=spend_limit,
         rpm_limit=body.rpm_limit,
         tpm_limit=body.tpm_limit,
     )

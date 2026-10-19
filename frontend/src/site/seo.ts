@@ -11,6 +11,8 @@ export interface PageMeta {
   keywords?: string[]
   /** Docs pages: the docs section, for breadcrumbs and article:section. */
   section?: string
+  /** Kept out of search results (the 404 page). */
+  noindex?: boolean
 }
 
 /** "DockWell by TheAbhiPatel": the name people search for, used in titles and descriptions. */
@@ -99,8 +101,11 @@ export function pageMeta(pathname: string): PageMeta {
   if (path === "/terms") {
     return { title: `Terms of service | ${SITE_NAME}`, description: "The terms for using DockWell software and the installs that run it.", path, type: "website" }
   }
-  return { title: `Page not found | ${SITE_NAME}`, description: HOME_DESCRIPTION, path, type: "website" }
+  return { title: `Page not found | ${SITE_NAME}`, description: HOME_DESCRIPTION, path, type: "website", noindex: true }
 }
+
+/** Rendered to dist/404.html, which servers return with status 404 for unknown paths. */
+export const NOT_FOUND_PATH = "/404"
 
 /** Every page that is pre-rendered to static HTML at build time. */
 export const PRERENDER_PATHS = ["/", "/pricing", "/models", "/docs", ...ALL_DOCS.map((d) => `/docs/${d.slug}`), "/privacy", "/terms"]
@@ -112,7 +117,7 @@ const escapeHtml = (value: string) =>
 export function renderHead(meta: PageMeta): string {
   const url = SITE_URL ? `${SITE_URL}${meta.path === "/" ? "/" : meta.path}` : ""
   const image = SITE_URL ? `${SITE_URL}${OG_IMAGE_PATH}` : ""
-  const robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+  const robots = meta.noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
   const tags = [
     `<title>${escapeHtml(meta.title)}</title>`,
     `<meta name="description" content="${escapeHtml(meta.description)}" />`,

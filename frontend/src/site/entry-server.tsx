@@ -8,6 +8,8 @@ import { PRERENDER_PATHS, pageMeta, renderHead, robotsTxt, sitemapXml, structure
 export { PRERENDER_PATHS, robotsTxt, sitemapXml }
 
 /** Renders one public page to static HTML (used by scripts/prerender.mjs at build time). */
+export { NOT_FOUND_PATH } from "./seo"
+
 export async function render(url: string) {
   const handler = createStaticHandler(siteRoutes)
   const context = await handler.query(new Request(`http://localhost${url}`))

@@ -1,5 +1,7 @@
 """Workspaces, roles, invitations, project access and API key permissions."""
 
+from dockwell_api.db import SessionLocal
+from dockwell_api.services import platform
 from tests.conftest import Client, add_member, closing, role_id, signup_and_verify
 
 
@@ -103,3 +105,27 @@ async def test_transfer_ownership_and_activity_log(client: Client) -> None:
         assert (await admin.get(f"/api/workspaces/{ws}")).json()["is_owner"] is True
         log = (await admin.get(f"/api/workspaces/{ws}/audit")).json()
         assert any(e["action"] == "workspace.ownership_transferred" for e in log)
+
+
+async def test_new_keys_get_the_default_spend_limit(client: Client) -> None:
+    async with SessionLocal() as db:
+        await platform.update_config(db, {"default_key_spend_limit_micros": 5_000_000}, None)
+        await db.commit()
+    try:
+        me = await signup_and_verify(client)
+        ws = me["workspace_id"]
+        project = (await client.get(f"/api/workspaces/{ws}")).json()["default_project_id"]
+        res = await client.post(
+            f"/api/workspaces/{ws}/api-keys", json={"project_id": project, "name": "default"}
+        )
+        assert res.status_code == 201, res.text
+        assert res.json()["key"]["spend_limit_micros"] == 5_000_000
+        res = await client.post(
+            f"/api/workspaces/{ws}/api-keys",
+            json={"project_id": project, "name": "own", "spend_limit_micros": 1_000_000},
+        )
+        assert res.json()["key"]["spend_limit_micros"] == 1_000_000
+    finally:
+        async with SessionLocal() as db:
+            await platform.update_config(db, {"default_key_spend_limit_micros": None}, None)
+            await db.commit()

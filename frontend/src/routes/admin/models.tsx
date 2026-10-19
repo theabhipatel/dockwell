@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Boxes, CircleStop, DollarSign, FileText, MoreHorizontal, Pencil, Play, Plus, RotateCw, Rocket, Trash2, TriangleAlert } from "lucide-react"
 import { toast } from "sonner"
 
+import { CopyButton } from "@/components/copy-button"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { useBreadcrumbs } from "@/components/layout/breadcrumbs"
 import { Page, PageHeader } from "@/components/page"
@@ -400,7 +401,11 @@ function EditModelSheet({ model, onClose }: { model: AdminModel; onClose: () => 
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
         <SheetHeader>
           <SheetTitle>{model.display_name}</SheetTitle>
-          <SheetDescription><code>{model.public_id}</code> via {model.provider_name}</SheetDescription>
+          <SheetDescription className="flex items-center gap-1">
+            <code>{model.public_id}</code>
+            <CopyButton value={model.public_id} label="Copy model id" size="icon-xs" />
+            via {model.provider_name}
+          </SheetDescription>
         </SheetHeader>
         <Tabs defaultValue="details" className="px-4 pb-6">
           <TabsList>
@@ -595,11 +600,14 @@ export function AdminModelsPage() {
                 return (
                   <TableRow key={m.id} className={cn(!m.enabled && "opacity-60")}>
                     <TableCell className="pl-4">
-                      <button type="button" className="text-left hover:underline" onClick={() => setEditing(m)}>
+                      <Button type="button" variant="link" className="text-foreground h-auto p-0 text-left font-normal" onClick={() => setEditing(m)}>
                         <p className="font-medium">{m.display_name}</p>
-                      </button>
+                      </Button>
                       <p className="text-muted-foreground text-xs">
-                        <code>{m.public_id}</code> · {contextLength(m.context_length)} · {m.capabilities.join(", ")}
+                        <code>{m.public_id}</code>
+                        <CopyButton value={m.public_id} label="Copy model id" size="icon-xs" className="-my-1 align-middle" />
+                        {" · "}
+                        {contextLength(m.context_length)} · {m.capabilities.join(", ")}
                       </p>
                       {m.deprecated_at ? <Badge variant="warning" className="mt-1">Deprecated{m.retirement_date ? `, retires ${shortDate(m.retirement_date)}` : ""}</Badge> : null}
                     </TableCell>

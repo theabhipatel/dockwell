@@ -108,7 +108,7 @@ function EnableTwoFactorDialog({ open, onOpenChange }: { open: boolean; onOpenCh
         ) : (
           <div className="space-y-4">
             <div className="flex justify-center">
-              {qr ? <img src={qr} alt="QR code for your authenticator app" className="size-48 rounded-lg border bg-white p-2" /> : <div className="bg-muted size-48 animate-pulse rounded-lg" />}
+              {qr ? <img src={qr} alt="QR code for your authenticator app" className="size-48 rounded-lg border bg-qr-surface p-2" /> : <div className="bg-muted size-48 animate-pulse rounded-lg" />}
             </div>
             {setup.data ? (
               <div className="text-muted-foreground flex items-center justify-center gap-1 text-xs">

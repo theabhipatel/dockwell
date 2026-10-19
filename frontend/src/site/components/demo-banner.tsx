@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ArrowUpRight, FlaskConical, X } from "lucide-react"
 
 import { DEMO_MODE } from "../config"
+import { Button } from "@/components/ui/button"
 
 const DISMISSED_KEY = "dockwell-demo-notice-dismissed"
 const AUTO_HIDE_MS = 30_000
@@ -86,11 +87,11 @@ export function DemoBanner() {
       onFocus={() => setPaused(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setPaused(false)}
     >
-      {/* Always dark (the `dark` class switches the theme tokens), on the teal gradient of the logo
-          tile, with a deep black shadow so it lifts clearly off the page in both themes. */}
+      {/* Always dark (the `dark` class switches the theme tokens), with a coral-tinted gradient and
+          the deepest elevation so it lifts clearly off the page in both themes. */}
       <div
         className={
-          "site-toast dark relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#33232a_0%,#19161b_45%,#0b0b10_100%)] text-white shadow-[0_22px_50px_-10px_rgb(0_0_0/0.75),0_8px_18px_-6px_rgb(0_0_0/0.5)] ring-1 ring-white/10" +
+          "site-toast dark relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,color-mix(in_oklch,var(--brand)_16%,var(--popover))_0%,var(--popover)_45%,var(--background)_100%)] text-foreground shadow-2xl ring-1 ring-border" +
           (phase === "leaving" ? " site-toast-out" : "")
         }
       >
@@ -99,13 +100,13 @@ export function DemoBanner() {
             <FlaskConical className="size-5" />
             <span aria-hidden className="absolute -top-1 -right-1 flex size-3">
               <span className="bg-brand absolute inline-flex size-full animate-ping rounded-full opacity-70" />
-              <span className="bg-brand relative inline-flex size-3 rounded-full ring-2 ring-[#19161b]" />
+              <span className="bg-brand relative inline-flex size-3 rounded-full ring-2 ring-popover" />
             </span>
           </span>
 
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold tracking-tight">You're exploring the live demo</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-white/70">
+            <p className="text-muted-foreground mt-0.5 text-xs leading-relaxed">
               Payments are Stripe test mode and data may be reset. Run it on your own GPU server for real traffic.
             </p>
             <a href="/docs/self-hosting" className="text-brand mt-2 inline-flex items-center gap-1 text-xs font-semibold sm:hidden">
@@ -121,17 +122,19 @@ export function DemoBanner() {
           </a>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={close}
           aria-label="Dismiss demo notice"
-          className="absolute top-2.5 right-2.5 grid size-7 place-items-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none sm:top-1/2 sm:-translate-y-1/2"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted absolute top-2.5 right-2.5 size-7 rounded-lg sm:top-1/2 sm:-translate-y-1/2"
         >
           <X className="size-4" />
-        </button>
+        </Button>
 
         {/* Countdown to auto-hide; pauses together with the timer. Hidden for reduced motion. */}
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10 motion-reduce:hidden">
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 bg-border motion-reduce:hidden">
           <div
             className="site-toast-progress bg-brand h-full origin-left"
             style={{ animationPlayState: paused || phase === "leaving" ? "paused" : "running" }}

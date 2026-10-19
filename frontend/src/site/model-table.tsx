@@ -1,3 +1,4 @@
+import { CopyButton } from "@/components/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -40,7 +41,10 @@ export function ModelPriceTable({ models, error, detailed = false }: { models: P
                   {m.deprecated ? <Badge variant="warning" className="ml-2">Deprecated</Badge> : null}
                   {m.status !== "ready" ? <Badge variant="secondary" className="ml-2">{m.status}</Badge> : null}
                 </p>
-                <code className="text-muted-foreground text-xs">{m.id}</code>
+                <span className="flex items-center gap-0.5">
+                  <code className="text-muted-foreground text-xs">{m.id}</code>
+                  <CopyButton value={m.id} label="Copy model id" size="icon-xs" />
+                </span>
                 {detailed && m.description ? <p className="text-muted-foreground mt-1 max-w-md text-xs">{m.description}</p> : null}
               </TableCell>
               <TableCell className="tabular">{ctx(m.context_length)}</TableCell>

@@ -72,11 +72,12 @@ export function NotificationRow({ item, onOpen }: { item: NotificationItem; onOp
     if (item.link) navigate(item.link)
   }
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={open}
       className={cn(
-        "flex w-full gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-muted focus-visible:bg-muted",
+        "h-auto w-full items-start justify-start gap-3 rounded-lg px-3 py-2.5 text-left font-normal whitespace-normal hover:bg-muted focus-visible:bg-muted",
         unread && "bg-brand-soft/40",
       )}
     >
@@ -89,7 +90,7 @@ export function NotificationRow({ item, onOpen }: { item: NotificationItem; onOp
         <span className="text-muted-foreground mt-1 block text-[0.7rem]">{relativeTime(item.created_at)}</span>
       </span>
       {unread ? <span className="mt-2 size-2 shrink-0 rounded-full bg-brand" aria-label="Unread" /> : null}
-    </button>
+    </Button>
   )
 }
 
