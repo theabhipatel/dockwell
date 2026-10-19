@@ -23,10 +23,15 @@ Built by [TheAbhiPatel](https://www.theabhipatel.com/). MIT licensed.
 - **Observability.** Usage charts and CSV export, request logs with latency and time to first token,
   an admin area with system health, plus Prometheus and Grafana.
 
+## Deploy
+
+Step-by-step instructions for every option (local, self-hosted with Docker Compose, and the Vercel
+demo) are in **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
 ## Live demo
 
-The public demo runs on Vercel with Groq as the provider and Stripe in test mode (card
-`4242 4242 4242 4242`). Data may be reset. See [Deploying the demo on Vercel](frontend/src/site/docs/content/vercel-demo.md).
+The public demo at https://dockwell.vercel.app runs on Vercel and Neon with Groq as the provider. New
+accounts get starter credit to try the playground and the API. Data may be reset. See [Deploying the demo on Vercel](frontend/src/site/docs/content/vercel-demo.md).
 
 ## Run locally (CPU, one command)
 
