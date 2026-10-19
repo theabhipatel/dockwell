@@ -76,53 +76,24 @@ Prometheus and Grafana.
 ```bash
 git clone https://github.com/theabhipatel/dockwell.git
 cd dockwell
-cp backend/.env.example .env.prod
+cp .env.prod.example .env.prod
 ```
 
-**2. Edit `.env.prod`.** At minimum, set these:
+**2. Edit `.env.prod`.** Replace every `change-me` value:
 
-```env
-ENVIRONMENT=production
-APP_URL=https://dockwell.example.com     # exact public address, no trailing slash
-COOKIE_SECURE=true
+| Setting | What to put |
+|---|---|
+| `APP_URL` | Your public address, for example `https://dockwell.example.com` (no trailing slash) |
+| `SECRET_KEY`, `ENCRYPTION_KEY`, `POSTGRES_PASSWORD`, `GRAFANA_PASSWORD` | Random values from `python3 -c "import secrets;print(secrets.token_urlsafe(32))"` (letters and digits only for `POSTGRES_PASSWORD`) |
+| `ADMIN_EMAILS` | Your email. It becomes platform admin on first sign-in. |
+| `SMTP_*`, `MAIL_FROM` | Your email provider's details |
+| `DOCKER_GID` | The output of `stat -c %g /var/run/docker.sock` |
 
-# Long random strings: python3 -c "import secrets;print(secrets.token_urlsafe(48))"
-SECRET_KEY=...
-ENCRYPTION_KEY=...
-POSTGRES_PASSWORD=...                    # letters and digits only
-GRAFANA_PASSWORD=...
-
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_STARTTLS=true
-SMTP_USERNAME=...
-SMTP_PASSWORD=...
-MAIL_FROM="DockWell <dockwell@example.com>"
-
-ADMIN_EMAILS=you@example.com             # becomes platform admin on first sign-in
-
-# Register the bundled engine on start-up. Keep only the block for your profile.
-# GPU server (vLLM):
-VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct      # model the vLLM engine serves
-BOOTSTRAP_VLLM_URL=http://vllm:8000/v1
-BOOTSTRAP_VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct
-# CPU server (llama.cpp):
-# BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1
-# BOOTSTRAP_LLAMACPP_MODEL=qwen2.5-1.5b-instruct
-
-# Lets admins deploy models from the browser: run `stat -c %g /var/run/docker.sock`
-DOCKER_GID=999
-
-# Optional: Stripe live keys
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-```
-
-Delete these development-only lines:
-
-- `SEED_ADMIN_PASSWORD`
-- `SEED_USER_EMAIL`, `SEED_USER_PASSWORD` and `SEED_USER_NAME`
-- `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` (on a CPU server, replace it with the value above)
+- **Model engine:** the file is set up for a GPU server with `Qwen/Qwen2.5-7B-Instruct`. To change the
+  model, change `VLLM_MODEL` and `BOOTSTRAP_VLLM_MODEL` together.
+- **CPU server:** comment out the GPU block and uncomment the CPU block.
+- **Optional:** Stripe, Google sign-in and the Hugging Face token are optional; leave them empty if
+  you don't need them.
 
 Back up `.env.prod`. You can't recover encrypted data without `ENCRYPTION_KEY`.
 

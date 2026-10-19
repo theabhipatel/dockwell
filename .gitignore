@@ -19,4 +19,10 @@ frontend/openapi.json
 .vercel-secrets.env
 .vercel/
 .vercel
-.env*
+# Written by `vercel link` (holds a short-lived token)
+.env.local
+
+# Example settings files are committed
+!.env.example
+!**/.env.example
+!.env.prod.example

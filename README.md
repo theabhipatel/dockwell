@@ -75,7 +75,7 @@ Optional, for payments in test mode: set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK
 ## Self-host on a GPU server
 
 ```bash
-cp backend/.env.example .env.prod   # edit APP_URL, secrets, POSTGRES_PASSWORD, GRAFANA_PASSWORD, SMTP, Stripe
+cp .env.prod.example .env.prod      # fill in the change-me values (domain, secrets, email)
 docker compose -f docker-compose.prod.yml --env-file .env.prod --profile gpu up -d --build
 ```
 

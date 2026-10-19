@@ -1,7 +1,6 @@
 # DockWell on one server: Postgres, API, web (nginx), inference engine(s) and monitoring.
 #
-#   cp backend/.env.example .env.prod      # then edit: APP_URL, SECRET_KEY, ENCRYPTION_KEY,
-#                                           # POSTGRES_PASSWORD, COOKIE_SECURE=true, SMTP_*, STRIPE_*
+#   cp .env.prod.example .env.prod         # then fill in the change-me values
 #   GPU server:  docker compose -f docker-compose.prod.yml --env-file .env.prod --profile gpu up -d --build
 #   CPU server:  docker compose -f docker-compose.prod.yml --env-file .env.prod --profile cpu up -d --build
 #

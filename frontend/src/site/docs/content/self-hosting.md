@@ -32,62 +32,25 @@ cd dockwell
 
 ## 2. Configure
 
-Copy the example settings into `.env.prod` at the repository root:
+Copy the production template into `.env.prod` at the repository root:
 
 ```bash
-cp backend/.env.example .env.prod
+cp .env.prod.example .env.prod
 ```
 
-Edit `.env.prod`. At minimum, set these:
+Edit `.env.prod` and replace every `change-me` value:
 
-```env
-ENVIRONMENT=production
-APP_URL=https://dockwell.example.com
-COOKIE_SECURE=true
+| Setting | What to put |
+|---|---|
+| `APP_URL` | Your public address, for example `https://dockwell.example.com`, with `https://` and no trailing slash. |
+| `SECRET_KEY`, `ENCRYPTION_KEY` | Long random strings: `python3 -c "import secrets;print(secrets.token_urlsafe(48))"`. |
+| `POSTGRES_PASSWORD` | A strong password for the bundled PostgreSQL, letters and digits only (it's placed inside a URL). |
+| `GRAFANA_PASSWORD` | The password for Grafana's `admin` user. |
+| `ADMIN_EMAILS` | Your email. It becomes a platform admin on first sign-in. Comma separated for several. |
+| `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `MAIL_FROM` | Your email provider's details, for verification, invitation and billing emails. |
+| `DOCKER_GID` | The group id of the Docker socket: `stat -c %g /var/run/docker.sock`. Needed for deploying models from the browser. |
 
-# Long random strings: python3 -c "import secrets;print(secrets.token_urlsafe(48))"
-SECRET_KEY=replace-with-a-long-random-string
-ENCRYPTION_KEY=replace-with-another-long-random-string
-
-# Database password for the bundled PostgreSQL (letters and digits only)
-POSTGRES_PASSWORD=replace-with-a-strong-password
-
-# Email
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_STARTTLS=true
-SMTP_USERNAME=dockwell@example.com
-SMTP_PASSWORD=your-smtp-password
-MAIL_FROM="DockWell <dockwell@example.com>"
-
-# The first platform admin (comma separated for several)
-ADMIN_EMAILS=you@example.com
-
-# Payments (live keys from the Stripe dashboard)
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# GPU metrics on the admin System health page
-PROMETHEUS_URL=http://prometheus:9090
-
-# Monitoring and the bundled engine
-GRAFANA_PASSWORD=replace-with-a-grafana-password
-VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct
-
-# Register the bundled engine on start-up (keep the block for your profile)
-# gpu profile:
-BOOTSTRAP_VLLM_URL=http://vllm:8000/v1
-BOOTSTRAP_VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct   # same as VLLM_MODEL
-# cpu profile:
-# BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1
-# BOOTSTRAP_LLAMACPP_MODEL=qwen2.5-1.5b-instruct
-
-# Lets admins deploy models from the browser: the group id of the Docker socket
-# (run: stat -c %g /var/run/docker.sock)
-DOCKER_GID=999
-```
-
-Remove the development lines you don't need, in particular `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` (unless you replace it with the cpu profile value above), `SEED_ADMIN_PASSWORD` and the `SEED_USER_*` lines. Every setting is described in the [Configuration reference](/docs/configuration).
+The template is set up for the `gpu` profile: the bundled vLLM serves `VLLM_MODEL` (`Qwen/Qwen2.5-7B-Instruct`) and registers itself through `BOOTSTRAP_VLLM_URL` and `BOOTSTRAP_VLLM_MODEL` (keep those two model values equal). For the `cpu` profile, comment out that block and uncomment the llama.cpp block. Stripe, Google sign-in and `HF_TOKEN` are optional: fill them in when you need them (see steps 7 and 8). Every setting is described in the [Configuration reference](/docs/configuration).
 
 > [!WARNING]
 > Back up `.env.prod`, especially `ENCRYPTION_KEY`. It encrypts provider API keys, the Hugging Face token and two-factor secrets in the database. If you lose or change it, those values can't be decrypted.
