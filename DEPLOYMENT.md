@@ -212,6 +212,8 @@ Full guide: `frontend/src/site/docs/content/self-hosting.md` (or `/docs/self-hos
 This option runs the same app on Vercel, with Neon as the database and Groq as the model provider.
 It can't run your own models, and serverless time limits apply, so use it for a public demo only.
 
+For a copy-paste walkthrough on a fresh Vercel account, follow **[VERCEL_GUIDE.md](VERCEL_GUIDE.md)**.
+
 **Needs:** a Vercel account with the CLI logged in (`vercel login`), a Neon database, a Groq API
 key, and uv installed locally. SMTP and Stripe test keys are optional.
 
