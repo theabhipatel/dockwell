@@ -123,9 +123,12 @@ The webhook endpoint needs these events: `checkout.session.completed`, `checkout
 | `DEFAULT_MAX_TOKENS` | `4096` | Output cap applied when a request doesn't set `max_tokens`. Also bounds the reservation. It's lowered automatically to fit the model's context and maximum output. |
 | `RESERVATION_TTL_MINUTES` | `30` | Reservations older than this are treated as abandoned (for example after a crash) and released by housekeeping. Keep it longer than your longest request. |
 | `BOOTSTRAP_LLAMACPP_URL` | (unset; `http://127.0.0.1:31800/v1` in `.env.example`) | Registers a llama.cpp server as a provider on start-up, with one model. Used for local development. Remove it in production unless you point it at your own llama.cpp server. |
-| `BOOTSTRAP_LLAMACPP_MODEL` | `qwen2.5-0.5b-instruct` | The model id registered with `BOOTSTRAP_LLAMACPP_URL`. |
+| `BOOTSTRAP_LLAMACPP_MODEL` | `qwen2.5-0.5b-instruct` | The model id registered with `BOOTSTRAP_LLAMACPP_URL`. With the production `cpu` profile it's also the name the `llamacpp` service serves under: set it to `qwen2.5-1.5b-instruct` to match the default GGUF model. |
+| `BOOTSTRAP_VLLM_URL` | (unset) | Registers a vLLM server as a provider on start-up, with the model below. With the production `gpu` profile use `http://vllm:8000/v1`. |
+| `BOOTSTRAP_VLLM_MODEL` | (unset) | The served model name, the same value as `VLLM_MODEL` (for example `Qwen/Qwen2.5-7B-Instruct`). The public model id is the part after the last `/`, lowercased. |
+| `BOOTSTRAP_VLLM_CONTEXT` | `8192` | Context length recorded for that model. Keep it equal to `VLLM_MAX_MODEL_LEN`. |
 | `GROQ_API_KEY` | | Registers Groq as a provider on start-up (the public demo). Free keys at console.groq.com. |
-| `GROQ_MODELS` | `llama-3.1-8b-instant,llama-3.3-70b-versatile` | Comma-separated Groq model ids offered when `GROQ_API_KEY` is set. |
+| `GROQ_MODELS` | `llama-3.1-8b-instant,llama-3.3-70b-versatile` | Comma-separated Groq model ids offered when `GROQ_API_KEY` is set. Use ids your key can access: list them with `curl https://api.groq.com/openai/v1/models -H "Authorization: Bearer $GROQ_API_KEY"`. |
 
 Bootstrapping is idempotent: it adds what's missing and never removes models or changes prices you set later.
 
@@ -170,6 +173,8 @@ The production compose file reads these from `.env.prod`. They configure the con
 | `WEB_PORT` | `31080` | Host port where the `web` container (nginx) is published. Put your TLS reverse proxy in front of it. |
 | `VLLM_MODEL` | `Qwen/Qwen2.5-7B-Instruct` | Hugging Face id of the model the bundled `vllm` service serves (`gpu` profile). |
 | `VLLM_GPU_COUNT` | `1` | Number of GPUs the bundled `vllm` service uses. |
+| `VLLM_MAX_MODEL_LEN` | `8192` | Context length of the bundled `vllm` service. |
+| `DOCKER_GID` | `999` | Group id of `/var/run/docker.sock` on the host (`stat -c %g /var/run/docker.sock`). Needed for deploying models from the browser. |
 | `GRAFANA_PASSWORD` | | Password for Grafana's `admin` user (port 31030). |
 
 ## Frontend settings
@@ -198,8 +203,8 @@ Platform admins change these in **Admin > Settings** without restarting anything
 |---|---|---|
 | Sign-up enabled | On | Lets new people create accounts. When off, nobody can sign up (invited people included), and admins create accounts in **Admin > Users** instead. Existing users can still sign in. |
 | Google sign-in | On | Shows Google sign-in, if `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. |
-| Require email verification | On | Users must verify their email before signing in. |
-| Free starter credit | On, $3.00 | Credit given once per account (and once per email address) after the email is verified. |
+| Require email verification | On | Users must verify their email before signing in. When off, no verification email is sent and new accounts can sign in straight away (useful for a demo without SMTP). |
+| Free starter credit | On, $3.00 | Credit given once per account (and once per email address) after the email is verified, or straight away when email verification is off. |
 
 ### Credit purchases
 

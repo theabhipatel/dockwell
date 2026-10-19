@@ -100,8 +100,18 @@ SMTP_PASSWORD=...
 MAIL_FROM="DockWell <dockwell@example.com>"
 
 ADMIN_EMAILS=you@example.com             # becomes platform admin on first sign-in
-VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct      # model served by the bundled vLLM engine
-PROMETHEUS_URL=http://prometheus:9090
+
+# Register the bundled engine on start-up. Keep only the block for your profile.
+# GPU server (vLLM):
+VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct      # model the vLLM engine serves
+BOOTSTRAP_VLLM_URL=http://vllm:8000/v1
+BOOTSTRAP_VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct
+# CPU server (llama.cpp):
+# BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1
+# BOOTSTRAP_LLAMACPP_MODEL=qwen2.5-1.5b-instruct
+
+# Lets admins deploy models from the browser: run `stat -c %g /var/run/docker.sock`
+DOCKER_GID=999
 
 # Optional: Stripe live keys
 STRIPE_SECRET_KEY=sk_live_...
@@ -112,7 +122,7 @@ Delete these development-only lines:
 
 - `SEED_ADMIN_PASSWORD`
 - `SEED_USER_EMAIL`, `SEED_USER_PASSWORD` and `SEED_USER_NAME`
-- `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1`
+- `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` (on a CPU server, replace it with the value above)
 
 Back up `.env.prod`. You can't recover encrypted data without `ENCRYPTION_KEY`.
 
@@ -157,8 +167,9 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod logs -f api vllm
 
 **6. Add your model**
 
-- **Bundled vLLM engine:** in **Admin > Models > Providers**, add a provider of kind **vLLM** with
-  the URL `http://vllm:8000/v1`. Import its model and set a price.
+- **Bundled engine:** nothing to do. With the `BOOTSTRAP_*` lines above it registers itself on
+  start-up with a default price, and turns **ready** in **Admin > Models** once the weights are
+  loaded. You can change the price there.
 - **More models from the browser:** go to **Admin > Models > Deploy model** and enter a Hugging Face
   id. Gated models, such as Llama and Gemma, need a Hugging Face token, which you set in
   **Admin > Settings**.
@@ -271,7 +282,8 @@ Full guide: `frontend/src/site/docs/content/vercel-demo.md` (or `/docs/vercel-de
 - `APP_URL` is the exact public address, with `https://` and no trailing slash.
 - HTTPS is in front of the app, and `COOKIE_SECURE=true` is set.
 - `SECRET_KEY`, `ENCRYPTION_KEY` and `POSTGRES_PASSWORD` are long, random and backed up.
-- The development seed lines (`SEED_*`, local `BOOTSTRAP_LLAMACPP_URL`) are removed.
+- The development seed lines (`SEED_*`, the local `BOOTSTRAP_LLAMACPP_URL` on `127.0.0.1:31800`) are removed.
+- `DOCKER_GID` matches `stat -c %g /var/run/docker.sock`, if admins deploy models from the browser.
 - Email works: **Admin > Settings > Send test email**.
 - The Stripe webhook is set up, if you sell credits.
 - Internal ports (`31080`, `31090`, `31030`) aren't reachable from the internet.

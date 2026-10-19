@@ -73,9 +73,21 @@ PROMETHEUS_URL=http://prometheus:9090
 # Monitoring and the bundled engine
 GRAFANA_PASSWORD=replace-with-a-grafana-password
 VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct
+
+# Register the bundled engine on start-up (keep the block for your profile)
+# gpu profile:
+BOOTSTRAP_VLLM_URL=http://vllm:8000/v1
+BOOTSTRAP_VLLM_MODEL=Qwen/Qwen2.5-7B-Instruct   # same as VLLM_MODEL
+# cpu profile:
+# BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1
+# BOOTSTRAP_LLAMACPP_MODEL=qwen2.5-1.5b-instruct
+
+# Lets admins deploy models from the browser: the group id of the Docker socket
+# (run: stat -c %g /var/run/docker.sock)
+DOCKER_GID=999
 ```
 
-Remove the development lines you don't need, in particular `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` `SEED_ADMIN_PASSWORD` and the `SEED_USER_*` lines. Every setting is described in the [Configuration reference](/docs/configuration).
+Remove the development lines you don't need, in particular `BOOTSTRAP_LLAMACPP_URL=http://127.0.0.1:31800/v1` (unless you replace it with the cpu profile value above), `SEED_ADMIN_PASSWORD` and the `SEED_USER_*` lines. Every setting is described in the [Configuration reference](/docs/configuration).
 
 > [!WARNING]
 > Back up `.env.prod`, especially `ENCRYPTION_KEY`. It encrypts provider API keys, the Hugging Face token and two-factor secrets in the database. If you lose or change it, those values can't be decrypted.
@@ -116,7 +128,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod logs -f api vllm
 All containers share a Docker network called `dockwell`. The `api` container also mounts `/var/run/docker.sock` and runs with `ENGINE_MANAGER=docker` and `ENGINE_NETWORK=dockwell`, so platform admins can deploy more models from the browser. Each deployed engine joins the same network.
 
 > [!WARNING]
-> Access to the Docker socket is equivalent to root access on the host. Only give platform admin rights to people you'd trust with the server. If you don't want browser deployments, set `ENGINE_MANAGER=none` and remove the socket mount.
+> Access to the Docker socket is equivalent to root access on the host. Only give platform admin rights to people you'd trust with the server. If you don't want browser deployments, set `ENGINE_MANAGER=none` and remove the socket mount. If you keep them, `DOCKER_GID` must match the group id of `/var/run/docker.sock` on the host (`stat -c %g /var/run/docker.sock`), or the API gets "permission denied" when it starts an engine.
 
 ## 4. Put HTTPS in front
 
@@ -178,7 +190,9 @@ You can promote other users to admin from **Admin > Users** later. Check **Admin
 
 ### The bundled vLLM engine (gpu profile)
 
-The `vllm` service serves `VLLM_MODEL` inside the Docker network at `http://vllm:8000/v1`. Register it once:
+The `vllm` service serves `VLLM_MODEL` inside the Docker network at `http://vllm:8000/v1`. With `BOOTSTRAP_VLLM_URL` and `BOOTSTRAP_VLLM_MODEL` set as in step 2, the API registers it on start-up with a default price you can change in **Admin > Models**. Nothing else to do.
+
+To register it by hand instead:
 
 1. Go to **Admin > Models > Providers** and select **Add provider**.
 2. Choose the kind **vLLM**, name it (for example `vLLM`), and enter the base URL `http://vllm:8000/v1`. No API key is needed.
@@ -189,7 +203,7 @@ Until vLLM finishes loading, the check fails and the model shows **starting**. D
 
 ### The bundled llama.cpp engine (cpu profile)
 
-Set `BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1` and `BOOTSTRAP_LLAMACPP_MODEL` to the model alias in `.env.prod` to have the API register it on start, or add it as a provider of kind **llama.cpp** as above.
+Set `BOOTSTRAP_LLAMACPP_URL=http://llamacpp:8080/v1` and `BOOTSTRAP_LLAMACPP_MODEL=qwen2.5-1.5b-instruct` in `.env.prod` to have the API register it on start, or add it as a provider of kind **llama.cpp** as above. `BOOTSTRAP_LLAMACPP_MODEL` is also the name the `llamacpp` service serves the model under, so keep it matching the model in `LLAMACPP_HF_REPO` (by default Qwen2.5 1.5B Instruct, GGUF).
 
 ### Deploying models from the browser
 
@@ -294,7 +308,8 @@ Model weights don't need backing up: they're downloaded again if missing.
 - `APP_URL` is the exact public address, with `https://` and no trailing slash.
 - `COOKIE_SECURE=true` and HTTPS in front of `web`.
 - `SECRET_KEY`, `ENCRYPTION_KEY` and `POSTGRES_PASSWORD` are long and random, and backed up.
-- `SEED_ADMIN_PASSWORD`, the `SEED_USER_*` lines and the local `BOOTSTRAP_LLAMACPP_URL` are removed.
+- `SEED_ADMIN_PASSWORD`, the `SEED_USER_*` lines and the local `BOOTSTRAP_LLAMACPP_URL` (`127.0.0.1:31800`) are removed.
+- `DOCKER_GID` matches `stat -c %g /var/run/docker.sock`, if admins deploy models from the browser.
 - SMTP works (**Send test email** in Admin > Settings).
 - The Stripe webhook is set up and the last event shows in Admin > Settings.
 - Ports `31080`, `31090` and `31030` aren't reachable from the internet.

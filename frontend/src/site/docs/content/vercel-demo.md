@@ -161,6 +161,7 @@ Each entry in `GROQ_MODELS` is a Groq model id. DockWell uses the part after the
 |---|---|
 | Every action fails with "Cross-origin request blocked" | `APP_URL` doesn't exactly match the address in the browser. Fix it (with `https://`, no trailing slash) and redeploy. |
 | Errors like "relation ... does not exist" | The migrations haven't run. Do step 2. |
-| No models in the playground | Check `GROQ_API_KEY`, then look in **Admin > Models**. Open `/api/health` once to wake the function, or wait for the next cron run. |
+| No models in the playground | Check `GROQ_API_KEY` and that every id in `GROQ_MODELS` is one your key can use (`curl https://api.groq.com/openai/v1/models -H "Authorization: Bearer $GROQ_API_KEY"`), then look in **Admin > Models**. Open `/api/health` once to wake the function, or wait for the next cron run. |
 | Paid in test mode but no credits | Check the Stripe webhook URL and `STRIPE_WEBHOOK_SECRET`. **Admin > Settings** shows when the last webhook arrived. |
 | No emails arrive | Check the SMTP settings and the function logs in Vercel. With Gmail you need an app password. |
+| No SMTP account at all | Create the admin account directly in the database (verified, with `is_admin` set) and leave `ADMIN_EMAILS` empty, so nobody else can claim an admin address. Then turn off **Require email verification** in **Admin > Settings**: new users sign in right after signing up and still get the starter credit. |
