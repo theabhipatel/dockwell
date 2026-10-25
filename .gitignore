@@ -26,3 +26,6 @@ frontend/openapi.json
 !.env.example
 !**/.env.example
 !.env.prod.example
+
+.vercel
+.env*
